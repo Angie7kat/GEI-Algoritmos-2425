@@ -1,0 +1,130 @@
+TITULO: Práctica 1 -> SUCESION DE FIBONACCI
+
+AUTOR1: Ángela Fouz Suárez          LOGIN1: angela.fouz
+AUTOR2: Angela Clemente López       LOGIN2: angela.clemente
+GRUPO:2.3	FECHA:28/09/24
+
+.-INTRODUCCION:
+
+	En esta práctica se estudia la eficiencia computacional de tres algoritmos 
+  diferentes para calcular la sucesión de Fibonacci. La sucesión de Fibonacci es 
+  un problema clásico que se puede resolver de diversas maneras, con costos 
+  computacionales muy distintos. Se implementarán tres algoritmos: el primero con 
+  complejidad exponencial, el segundo con complejidad lineal y el
+  tercero con complejidad logarítmica. Además de validar su correcto 
+  funcionamiento, se realizará un análisis empírico de su eficiencia midiendo 
+  tiempos de ejecución y comparando los resultados con cotas subestimadas y 
+  sobreestimadas, basadas en sus complejidades teóricas.
+
+.-UNIDADES:
+
+  Las unidades empleadas en todas las pruebas son en microsegundos(micros).
+
+
+.- MAQUINA:
+
+  sistema operativo :Ubuntu 22.04.1 LTS
+  procesador : AMD® Ryzen 7 4800h with radeon graphics × 16
+  memoria :12,0 GiB
+
+.-ALGORITMO FIB1:
+
+int fib1(int n){
+    if (n < 2) {
+      return n;
+    } else
+      return (fib1(n-1) + fib1(n-2));
+}   
+   
+.-ALGORITBO FIB2:
+
+int fib2(int n){
+	int i, j;
+ 	i = 1;
+	j = 0;
+	for(int k = 1; k <= n; k++) {   
+		j = i + j;
+		i = j - i;
+	}
+	return j;
+}
+
+.-ALGORITMO FIB3:
+
+int fib3(int n) {
+	int i, j, k, h, t;
+	i = 1; j = 0; k = 0; h = 1; t=0;
+	while ( n > 0 ) {
+		if ((n % 2) != 0) {
+			t = j * h;
+			j = (i * h) + (j * k) + t;
+			i = (i * k) + t;
+		}
+		t = h * h;
+		h = (2 * k * h) + t;
+		k = (k * k) + t;
+		n = n / 2;
+	}
+	return j;
+}
+
+
+-.Resultados para fib1:
+
+Resultados para fib1:
+       n	                    t(n)	            t(n)/(1.1^n)	  t(n)/((1 + sqrt(5))/2)	              t(n)/(2^n)
+
+       2	               0.0079100*	               0.0065372	               0.0030214	               0.0019775
+       4	               0.0196300*	               0.0134076	               0.0028640	               0.0012269
+       8	               0.1334500*	               0.0622554	               0.0028406	               0.0005213
+      16	               6.2609400*	               1.3625630	               0.0028369	               0.0000955
+      32	           13827.0000000	             654.8804682	               0.0028387	               0.0000032
+
+
+ 
+										C:0.0028
+                                                                                        
+Cota subestimada:1,1^n 
+Cota ajustada: (1+sqrt(5))/2,
+Cota sobrestimada: 2^n
+
+.-Resultados para fib2:
+
+       n	                    t(n)	            t(n)/(n^0.8)	                  t(n)/n	        t(n)/(n *log(n))
+
+    1000	               2.1271300*	               0.0084683	               0.0021271	               0.0003079
+   10000	              21.1643000*	               0.0133538	               0.0021164	               0.0002298
+  100000	             211.0411900*	               0.0211041	               0.0021104	               0.0001833
+ 1000000	            2116.0000000	               0.0335363	               0.0021160	               0.0001532
+10000000	           21150.0000000	               0.0531264	               0.0021150	               0.0001312
+
+										C:0.0021
+Cota subestimada: n^0,8
+Cota ajustada: n
+Cota sobrestimada: n * log(n) 
+
+.-Resultados para fib3:
+
+       n	                    t(n)	     t(n)/(sqrt(log(n)))	           t(n)/(log(n))	            t(n)/(n^0.5)
+
+    1000	               0.0369700*	               0.0140663	               0.0053520	               0.0011691
+   10000	               0.0466600*	               0.0153747	               0.0050660	               0.0004666
+  100000	               0.0580200*	               0.0170996	               0.0050396	               0.0001835
+ 1000000	               0.0687900*	               0.0185072	               0.0049792	               0.0000688
+10000000	               0.0797100*	               0.0198544	               0.0049454	               0.0000252
+
+										C:0.0050
+Cota subestimada: sqrt(log(n)
+Cota ajustada: log(n)
+Cota sobrestimada: n^0.5
+
+
+.-CONCLUSIONES:
+
+	Los resultados empíricos confirman las complejidades teóricas de los algoritmos.
+  Fib1, es ineficiente para grandes n, mientras que Fib2 y, sobre todo, Fib3, 
+  son altamente eficientes para cálculos de Fibonacci con valores grandes de n, 
+  siendo Fib3 la opción más óptima en términos de tiempo de ejecución.
+
+
+
