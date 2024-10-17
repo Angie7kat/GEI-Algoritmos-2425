@@ -228,22 +228,11 @@ void medirTiempo(int algorithm, int vect, int v[], int n){
             t = (tb - ta)/K;
             ok=1;
         }
-        switch (algorithm) {
-        case 1:
-            x = t / (pow(1.1 ,i)); y = t / (pow(((1 + sqrt(5)) / 2), i));
-            z = t / (pow(2 ,i));
-            break;
-        case 2:
-            x = t / (pow(i, 0.8)); y = t / i; z = t / (i *log(i));
-            break;
-        case 3:
-            x = t / (sqrt(log(i))); y = t / (log(i)); z = t / (pow(i ,0.5));
-            break;
-        default:
-            break;
-        }
+        x=t/pow(i,1.6);
+        y=t/pow(i,2.25);
+        z=t/pow(i,2.3);
         if(ok == 0){
-            printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",i,t,x,y,z);    
+            printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",i,t,x,y,z);   
         }else{
             printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",i,t,"*",x, y,z);
         }
@@ -260,33 +249,33 @@ int main(){
 
     printf("\n");
     printf("%s\n", "Resultados para vector ascencente con inserción:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7",
+                                             "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(1,1,v,n);
     printf("\n");
     printf("%s\n", "Resultados para vector descendente con inserción:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
+                                            "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(1,2,v,n);
     printf("\n");
     printf("%s\n", "Resultados para vector aleatorio con inserción:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
+                                            "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(1,3,v,n);
 
     printf("\n");
     printf("%s\n", "Resultados para vector ascendente con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
+                                            "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(2,1,v,n);
     printf("\n");
     printf("%s\n","Resultados para vector descendente con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
+                                            "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(2,2,v,n);
     printf("\n");
     printf("%s\n", "Resultados para vector aleatorio con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(1.1^n)", 
-                                    "t(n)/((1 + sqrt(5))/2)", "t(n)/(2^n)");
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
+                                            "t(n)/n^1.25", "t(n)/n^1.3");
     medirTiempo(2,3,v,n);
 }
