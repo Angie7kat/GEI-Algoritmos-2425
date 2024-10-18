@@ -189,93 +189,112 @@ void escogerAlgoritmo(int v[],int n,int algorithm){
             break;
         case 2:
             ord_rap(v,n);
+            break;
         default:
             break;
     }
 }
 
-void escogerVector(int n,int v[], int vector){
-    switch (vector){
-    case 1:
-        vector_ascendente(v,n);
-        break;
-    case 2:
-        vector_descendente(v,n);
-        break;
-    case 3:
-        vector_aleatorio(v,n);
-    default:
-        break;
+void escogerCota(int algorithm, int vect, double t, double* x, 
+double* y, double* z, int i){
+
+    if(algorithm == 1){ //insercion
+        if(vect == 1){ //ascendente
+            *x=t/pow(i,0.7);
+            *y=t/ pow(i,0.9);
+            *z=t/pow(i,1.2);
+        }else if(vect == 2){ //descendente
+            *x=t/pow(i,1.8);
+            *y=t/ pow(i,2);
+            *z=t/pow(i,2.2);
+        }else{ //aleatorio
+            *x=t/pow(i,1.8);
+            *y=t/ pow(i,2);
+            *z=t/pow(i,2.2);
+        }
+    }else{ //quicksort
+         if(vect == 1){ //ascendente
+            *x=t/(pow(i,0.89) * log(pow(i,0.89)));
+            *y=t/(pow(i,0.94) * log(pow(i,0.94)));
+            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+        }else if(vect == 2){ //descendente
+            *x=t/(pow(i,0.87) * log(pow(i,0.87)));
+            *y=t/(pow(i, 0.96) * log(pow(i,0.96)));
+            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+        }else{ //aleatorio
+            *x=t/(pow(i,0.89) * log(pow(i,0.89)));
+            *y=t/(pow(i,0.95) * log(pow(i,0.95)));
+            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+        }
     }
 }
 
-void medirTiempo(int algorithm, int vect, int v[], int n){
-   double ta, tb, t, x, y, z; int i, j, ok;
+void medirTiempo(int algorithm,void (*vector)(int[],int),
+ int vect){
+   double ta, tb, t, x = 0, y = 0, z = 0; int i, j, ok; int *v;
     for(i = 500; i <= 32000; i = i * 2){
+        v = malloc(sizeof (int) * i);
         ta = microsegundos();
-        escogerAlgoritmo(v,n,algorithm);
-        escogerVector(n,v,vect);
+        vector(v,i);
+        escogerAlgoritmo(v,i,algorithm);
         tb = microsegundos();
         t = tb - ta;
         ok=0;
         if(t < 500){
             ta = microsegundos();            
             for( j=1; j<= K; j++ ){
-                escogerAlgoritmo(v,n,algorithm);
-                escogerVector(n,v,vect);
+                vector(v,i);
+                escogerAlgoritmo(v,i,algorithm);
             }
             tb = microsegundos();            
             t = (tb - ta)/K;
             ok=1;
         }
-        x=t/pow(i,1.6);
-        y=t/pow(i,2.25);
-        z=t/pow(i,2.3);
+        escogerCota(algorithm,vect,t,&x,&y,&z,i);
         if(ok == 0){
-            printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",i,t,x,y,z);   
+            printf("%8d\t%24.7f\t%24.7lf\t%24.7lf\t%24.7lf\n",i,t,x,y,z);   
         }else{
-            printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",i,t,"*",x, y,z);
+            printf("%8d\t%24.7f%s\t%24.7lf\t%24.7lf\t%24.7lf\n",i,t,"*",x,y,z);
         }
+        free(v);
     }    
 }
 
 int main(){
-    int n = 17, v[n];
     inicializar_semilla();
     printf("\nTESTS:\n");
     test_insercion();
     printf("\n-----------------------\n");
     test_ord_rap();
-
     printf("\n");
     printf("%s\n", "Resultados para vector ascencente con inserción:");
     printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7",
-                                             "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(1,1,v,n);
+                                             "t(n)/n^0.9", "t(n)/n^1.2");
+    medirTiempo(1,vector_ascendente,1);
     printf("\n");
     printf("%s\n", "Resultados para vector descendente con inserción:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
-                                            "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(1,2,v,n);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^1.8", 
+                                            "t(n)/n^2", "t(n)/n^2.2");
+    medirTiempo(1,vector_descendente,2);
     printf("\n");
     printf("%s\n", "Resultados para vector aleatorio con inserción:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
-                                            "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(1,3,v,n);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^1.8", 
+                                            "t(n)/n^2", "t(n)/n^2.2");
+    medirTiempo(1,vector_aleatorio,3);
 
     printf("\n");
     printf("%s\n", "Resultados para vector ascendente con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
-                                            "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(2,1,v,n);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(n^0.87)log(n^0.87)", 
+                                            "t(n)/(n^0.94)log(n^0.94)", "t(n)/(n^1.1)log(n^1.1)");
+    medirTiempo(2,vector_ascendente,1);
     printf("\n");
     printf("%s\n","Resultados para vector descendente con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
-                                            "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(2,2,v,n);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", 
+    "t(n)/(n^0.87)log(n^0.87)", "t(n)/(n^0.96)log(n^0.96)", "t(n)/(n^1.1)log(n^1.1)");
+    medirTiempo(2,vector_descendente,2);
     printf("\n");
     printf("%s\n", "Resultados para vector aleatorio con ordenación rápida:");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7", 
-                                            "t(n)/n^1.25", "t(n)/n^1.3");
-    medirTiempo(2,3,v,n);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/(n^0.89)log(n^0.89)", 
+                                            "t(n)/(n^0.95)log(n^0.95)", "t(n)/(n^1.1)log(n^1.1)");
+    medirTiempo(2,vector_aleatorio,3);
 }
