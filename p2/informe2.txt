@@ -1,0 +1,210 @@
+TITULO: Práctica 2 -> ORDENACION POR INSERCION Y ORDENACION RAPIDA
+
+AUTOR1: Ángela Fouz Suárez          LOGIN1: angela.fouz
+AUTOR2: Angela Marlene Clemente López       LOGIN2: angela.clemente
+GRUPO:2.3	FECHA:19/10/24
+
+.-INTRODUCCION:
+
+	El objetivo principal es implementar ambos algoritmos, evaluar su rendimiento 
+  empírico bajo distintas condiciones iniciales de los datos y analizar su 
+  complejidad temporal.
+
+	La ordenación por inserción es un algoritmo simple y eficiente para listas 
+  pequeñas, cuya complejidad en el peor caso es cuadrática O(n2). Por otro lado,
+  la ordenación rápida, basada en la estrategia "divide y vencerás" y con una
+  complejidad promedio de O(nlog⁡n), es más adecuada para listas grandes. En esta 
+  práctica se utilizará una variante del algoritmo de ordenación rápida, en la 
+  que el pivote se selecciona aleatoriamente, lo que permite mejorar su 
+  rendimiento frente a la selección fija del pivote.
+
+	Para evaluar la eficiencia de los algoritmos, se realizarán mediciones del 
+  tiempo de ejecución con vectores de diferentes tamaños y en tres casos de 
+  inicialización distintos: ordenados ascendentemente, ordenados en orden 
+  descendente y con valores aleatorios. A partir de los resultados obtenidos, se 
+  buscará determinar empíricamente la complejidad de los algoritmos en función de 
+  	la naturaleza de los datos de entrada.
+
+.-UNIDADES:
+
+  Las unidades empleadas en todas las pruebas son en microsegundos(micros).
+
+
+.- MAQUINA:
+
+  + OS: Ubuntu 22.04.3 LTS
+  + Procesador: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 6 núcleos y 2 hilos.
+  + RAM: 16 GB 
+  + Kernel: Ubuntu 6.2.0-37-generic
+  + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+
+.-Algoritmo de inserción
+
+void ord_ins(int v[], int n) {
+    int i, x, j;
+    for (i = 0; i < n; i++) {
+        x = v[i];
+        j = i - 1;
+        while (j >= 0 && v[j] > x) {
+            v[j + 1] = v[j];
+            j = j - 1;
+        }
+        v[j + 1] = x;
+    }
+}
+
+.-Algoritmo de ordenación rápida
+
+void ord_rap_aux (int v [], int iz, int dr){
+    int pivote, i, j, x;
+    if(iz < dr){
+        srand(time(0));
+        x = (rand() % (dr - iz + 1)) + iz;
+        pivote = v[x];
+        intercambiar(v,iz, x);
+        i = iz +1;
+        j = dr;
+        while( i <= j){
+            while(i <= dr && v[i] < pivote){
+                i++;
+            }
+            while(v[j] > pivote){
+                j--;
+            }
+        
+            if(i <= j){
+                intercambiar(v,i, j);
+                i++;
+                j--;
+            }
+        }
+        intercambiar(v,iz, j);
+        ord_rap_aux(v, iz, j - 1);
+        ord_rap_aux(v, j+1, dr);
+    }
+}
+
+void ord_rap (int v [], int n){
+  ord_rap_aux(v,0,n - 1);
+}
+
+.-Medir Tiempos:
+
+	Para tiempos menores de 500ms calcularemos los tiempos de esta forma:
+  (tb-ta)/k (donde k son las repeteciones, en este caso 1000; tb, que corresponde
+  a la hora del sistema después de ejecutar el algoritmo; y ta, que corresponde a
+  la hora del sistema antes de ejecutar el algoritmo). Estos casos se marcarán en
+  la tabla con un "*". 
+
+.-Resultados para vector ascencente con inserción:
+       n	                    t(n)	              t(n)/n^0.7	                t(n)/n^1	              t(n)/n^1.2
+
+     500	              10.2260000*	               0.1319553	               0.0204520	               0.0059012
+    1000	              19.2660000*	               0.1530353	               0.0192660	               0.0048394
+    2000	              38.1650000*	               0.1866140	               0.0190825	               0.0041728
+    4000	              76.1830000*	               0.2293063	               0.0190458	               0.0036257
+    8000	             153.0950000*	               0.2836599	               0.0191369	               0.0031714
+   16000	             306.8180000*	               0.3499426	               0.0191761	               0.0027665
+   32000	             678.0000000	               0.4760195	               0.0211875	               0.0026610
+					
+										C:0.019
+Cota subestimada: n^0.7
+Cota ajustada: n^1
+Cota sobrestimada: n^1.2
+
+.-Resultados para vector descendente con inserción:
+       n	                    t(n)	              t(n)/n^1.8	                t(n)/n^2	              t(n)/n^2.2
+
+     500	            1227.0000000	               0.0170098	               0.0049080	               0.0014162
+    1000	            4860.0000000	               0.0193480	               0.0048600	               0.0012208
+    2000	           19426.0000000	               0.0222090	               0.0048565	               0.0010620
+    4000	           77710.0000000	               0.0255134	               0.0048569	               0.0009246
+    8000	          310207.0000000	               0.0292476	               0.0048470	               0.0008033
+   16000	         1243053.0000000	               0.0336569	               0.0048557	               0.0007005
+   32000	         4075885.0000000	               0.0316922	               0.0039804	               0.0004999
+
+										C:0.048
+Cota subestimada: n^1.8
+Cota ajustada: n^2
+Cota sobrestimada: n^2.2
+
+.-Resultados para vector aleatorio con inserción:
+       n	                    t(n)	              t(n)/n^1.8	                t(n)/n^2	              t(n)/n^2.2
+
+     500	             442.8320000*	               0.0061389	               0.0017713	               0.0005111
+    1000	            1715.0000000	               0.0068275	               0.0017150	               0.0004308
+    2000	            6418.0000000	               0.0073375	               0.0016045	               0.0003509
+    4000	           27475.0000000	               0.0090205	               0.0017172	               0.0003269
+    8000	          110774.0000000	               0.0104442	               0.0017308	               0.0002868
+   16000	          426564.0000000	               0.0115496	               0.0016663	               0.0002404
+   32000	         1772664.0000000	               0.0137834	               0.0017311	               0.0002174
+
+										C:0.0017
+Cota subestimada: n^1.8
+Cota ajustada: n^2
+Cota sobrestimada: n^2.2
+
+.-Resultados para vector ascendente con ordenación rápida:
+       n	                    t(n)	t(n)/(n^0.72)log(n^0.72)	t(n)/(n^0.87)log(n^0.87)	t(n)/(n^1.02)log(n^1.02)
+
+     500	             666.0000000	               1.6961708	               0.5526337	               0.1855713
+    1000	            1326.0000000	               1.8444806	               0.5416108	               0.1639104
+    2000	            2667.0000000	               2.0468394	               0.5416796	               0.1477431
+    4000	            5359.0000000	               2.2882393	               0.5457650	               0.1341577
+    8000	           11251.0000000	               2.6915942	               0.5785746	               0.1281784
+   16000	           23394.0000000	               3.1543858	               0.6110969#	               0.1220144
+   32000	           47328.0000000	               3.6153698	               0.6312385#	               0.1135900
+
+										c:0.54
+#Presencia de anomalías.
+Cota subestimada: (n^0.72)log(n^0.72)
+Cota ajustada: (n^0.87)log(n^0.87)
+Cota sobrestimada: (n^1.02)log(n^1.02)
+
+.-Resultados para vector descendente con ordenación rápida:
+       n	                    t(n)	t(n)/(n^0.84)log(n^0.84)	t(n)/(n^0.89)log(n^0.89)	t(n)/(n^0.94)log(n^0.94)
+
+     500	             768.0000000	               0.7953044	               0.5501412	               0.3817577
+    1000	            1526.0000000	               0.7942154	               0.5306737	               0.3557048
+    2000	            3213.0000000	               0.8489871	               0.5479474	               0.3547721
+    4000	            6450.0000000	               0.8725361	               0.5439634	               0.3401957
+    8000	           12781.0000000	               0.8913858	               0.5367851	               0.3242710
+   16000	           25811.0000000	               0.9336282	               0.5430718	               0.3168936
+   32000	           51696.0000000	               0.9748252	               0.5477199	               0.3087189
+
+										C:0.54
+Cota subestimada: (n^0.84)log(n^0.84)
+Cota ajustada: (n^0.89)log(n^0.89)
+Cota sobrestimada: (n^0.94)log(n^0.94)
+
+.-Resultados para vector aleatorio con ordenación rápida:
+       n	                    t(n)	t(n)/(n^0.81)log(n^0.81)	t(n)/(n^0.91)log(n^0.91)	t(n)/(n^1.01)log(n^1.01)
+
+     500	             924.0000000	               1.1956595	               0.5716815	               0.2766796
+    1000	            1867.0000000	               1.2397164	               0.5530520	               0.2497388
+    2000	            3732.0000000	               1.2845682	               0.5346847	               0.2252759
+    4000	            7579.0000000	               1.3636147	               0.5295772	               0.2081821
+    8000	           15330.0000000	               1.4518776	               0.5260955	               0.1929637
+   16000	           31053.0000000	               1.5573656	               0.5265289	               0.1801898
+   32000	           63012.0000000	               1.6820613	               0.5306039	               0.1694242
+
+										C:0.52
+Cota subestimada: (n^0.81)log(n^0.81)
+Cota ajustada: (n^0.91)log(n^0.91)
+Cota sobrestimada: (n^1.01)log(n^1.01)
+
+.-CONCLUSIONES:
+
+	Los resultados obtenidos muestran que la ordenación por inserción es eficiente 
+  en vectores pequeños y en situaciones casi ordenadas, con una complejidad 
+  cercana a (O(n)) en vectores ascendentes. Sin embargo, en el peor caso
+  (vectores descendentes), su complejidad es cuadrática (O(n^2)), lo que la hace 
+  ineficiente para grandes volúmenes de datos.
+
+	Por otro lado, la ordenación rápida con pivote aleatorio mostró una complejidad 
+  cercana a (O(n log n)) en promedio, lo que la hace mucho más adecuada para 
+  vectores grandes. Aunque presenta pequeñas anomalías en algunos casos, sigue 
+  siendo superior a la ordenación por inserción en la mayoría de las situaciones. 
+  En resumen, la ordenación rápida es preferible para grandes conjuntos de datos 
+  desordenados, mientras que la ordenación por inserción es útil en conjuntos 
+  pequeños o casi ordenados.
