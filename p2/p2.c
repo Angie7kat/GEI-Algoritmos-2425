@@ -201,7 +201,7 @@ double* y, double* z, int i){
     if(algorithm == 1){ //insercion
         if(vect == 1){ //ascendente
             *x=t/pow(i,0.7);
-            *y=t/ pow(i,0.9);
+            *y=t/ pow(i,1);
             *z=t/pow(i,1.2);
         }else if(vect == 2){ //descendente
             *x=t/pow(i,1.8);
@@ -214,17 +214,17 @@ double* y, double* z, int i){
         }
     }else{ //quicksort
          if(vect == 1){ //ascendente
-            *x=t/(pow(i,0.89) * log(pow(i,0.89)));
-            *y=t/(pow(i,0.94) * log(pow(i,0.94)));
-            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+            *x=t/(pow(i,0.72) * log(pow(i,0.72)));
+            *y=t/(pow(i,0.87) * log(pow(i,0.87)));
+            *z=t/(pow(i,1.02) * log(pow(i,1.02)));
         }else if(vect == 2){ //descendente
-            *x=t/(pow(i,0.87) * log(pow(i,0.87)));
-            *y=t/(pow(i, 0.96) * log(pow(i,0.96)));
-            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+            *x=t/(pow(i,0.84) * log(pow(i,0.84)));
+            *y=t/(pow(i, 0.89) * log(pow(i,0.89)));
+            *z=t/(pow(i,0.94) * log(pow(i,0.94)));
         }else{ //aleatorio
-            *x=t/(pow(i,0.89) * log(pow(i,0.89)));
-            *y=t/(pow(i,0.95) * log(pow(i,0.95)));
-            *z=t/(pow(i,1.1) * log(pow(i,1.1)));
+            *x=t/(pow(i,0.81) * log(pow(i,0.81)));
+            *y=t/(pow(i,0.91) * log(pow(i,0.91)));
+            *z=t/(pow(i,1.01) * log(pow(i,1.01)));
         }
     }
 }
@@ -269,7 +269,7 @@ int main(){
     printf("\n");
     printf("%s\n", "Resultados para vector ascencente con inserción:");
     printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", "t(n)/n^0.7",
-                                             "t(n)/n^0.9", "t(n)/n^1.2");
+                                             "t(n)/n^1", "t(n)/n^1.2");
     medirTiempo(1,vector_ascendente,1);
     printf("\n");
     printf("%s\n", "Resultados para vector descendente con inserción:");
@@ -284,17 +284,17 @@ int main(){
     printf("\n");
     printf("%s\n", "Resultados para vector ascendente con ordenación rápida:");
     printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", 
-    "t(n)/(n^0.87)log(n^0.87)", "t(n)/(n^0.94)log(n^0.94)", 
-    "t(n)/(n^1.1)log(n^1.1)");
+    "t(n)/(n^0.72)log(n^0.72)", "t(n)/(n^0.87)log(n^0.87)", 
+    "t(n)/(n^1.02)log(n^1.02)");
     medirTiempo(2,vector_ascendente,1); printf("\n");
     printf("%s\n","Resultados para vector descendente con ordenación rápida:");
     printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", 
-    "t(n)/(n^0.87)log(n^0.87)", "t(n)/(n^0.96)log(n^0.96)", 
-    "t(n)/(n^1.1)log(n^1.1)");
+    "t(n)/(n^0.84)log(n^0.84)", "t(n)/(n^0.89)log(n^0.89)", 
+    "t(n)/(n^0.94)log(n^0.94)");
     medirTiempo(2,vector_descendente,2); printf("\n");
     printf("%s\n", "Resultados para vector aleatorio con ordenación rápida:");
     printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", 
-    "t(n)", "t(n)/(n^0.89)log(n^0.89)", "t(n)/(n^0.95)log(n^0.95)", 
-    "t(n)/(n^1.1)log(n^1.1)");
+    "t(n)", "t(n)/(n^0.81)log(n^0.81)", "t(n)/(n^0.91)log(n^0.91)", 
+    "t(n)/(n^1.01)log(n^1.01)");
     medirTiempo(2,vector_aleatorio,3);
 }
