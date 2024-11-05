@@ -1,2 +1,3 @@
 # Algoritmos-24<br>
-p1 : 9,5
+p1 : 9,5<br>
+p2 : 6<br>
