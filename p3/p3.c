@@ -79,23 +79,22 @@ unsigned int resolucion_doble(int pos_ini, int num_intento) {
 
 pos buscar_cerrada(char *clave, tabla_cerrada diccionario, int tam,
                    int *colisiones, unsigned int (*dispersion)(char *, int),
-                   unsigned int (*resol_colisiones)(int pos_ini, 
-                   int num_intento)) {
+                   unsigned int (*resol_colisiones)(int pos_ini, int num_intento)) {
     int i = 0;
     pos inicial = dispersion(clave, tam);
     pos actual = inicial;
 
     *colisiones = 0;
 
-    while (diccionario[actual].ocupada && 
-            strcmp(diccionario[actual].clave, clave) != 0) {
+    while (diccionario[actual].ocupada && strcmp(diccionario[actual].clave, clave) != 0) {
         i++;
-        actual = resol_colisiones(inicial, i);
+        actual = resol_colisiones(inicial, i) % tam;
         (*colisiones)++;
-        if (actual == inicial) return -1;
+        if (i >= tam) return -1; // Stop if we've checked all positions
     }
     return actual;
 }
+
 
 int insertar_cerrada(char *clave, char *sinonimos,
                      tabla_cerrada diccionario, int tam,
@@ -157,71 +156,67 @@ int leer_sinonimos(item datos[]) {
     return(i);
 }
 
+void mostrar_resultados(tabla_cerrada diccionario, int tam, int colisiones_totales,
+                        char *claves[], int num_claves,
+                        unsigned int (*dispersion)(char *, int),
+                        unsigned int (*resol_colisiones)(int, int),
+                        const char *tipo_tabla) {
+    int colisiones, pos;
+    
+    printf("***TABLA CERRADA %s\n", tipo_tabla);
+    mostrar_cerrada(diccionario, tam);
+    printf("Numero total de colisiones al insertar los elementos: %d\n",
+           colisiones_totales);
+
+    for (int i = 0; i < num_claves; i++) {
+        pos = buscar_cerrada(claves[i], diccionario, tam, &colisiones,
+                             dispersion, resol_colisiones);
+        if (pos != -1 && strcmp(diccionario[pos].clave, claves[i]) == 0) {
+            printf("Al buscar: %s, encuentro: %s, colisiones: %d\n",
+                   claves[i], claves[i], colisiones);
+        } else {
+            printf("Al buscar: %s, no encuentro, colisiones: %d\n",
+                   claves[i], colisiones);
+        }
+    }
+    
+    pos = buscar_cerrada("CARLOS", diccionario, tam, &colisiones,
+                         dispersion, resol_colisiones);
+    if (pos != -1 && strcmp(diccionario[pos].clave, "CARLOS") == 0) {
+        printf("Al buscar: CARLOS, encuentro: CARLOS, colisiones: %d\n", colisiones);
+    } else {
+        printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
+    }
+}
+
+void realizar_test(tabla_cerrada *diccionario, int tam, char *claves[],
+                   int num_claves, unsigned int (*dispersion)(char *, int),
+                   unsigned int (*resol_colisiones)(int, int),
+                   const char *tipo_tabla) {
+    int colisiones_totales = 0;
+    
+    inicializar_cerrada(diccionario, tam);
+    for (int i = 0; i < num_claves; i++) {
+        colisiones_totales += insertar_cerrada(claves[i], "", *diccionario,
+                                               tam, dispersion, resol_colisiones);
+    }
+    
+    mostrar_resultados(*diccionario, tam, colisiones_totales, claves, num_claves,
+                       dispersion, resol_colisiones, tipo_tabla);
+}
+
 void tests() {
     char *claves[] = {"ANA", "LUIS", "JOSE", "OLGA", "ROSA", "IVAN"};
     int num_claves = 6;
-    tabla_cerrada diccionario_lineal, diccionario_cuadratica;
-    tabla_cerrada diccionario_doble;
-    int colisiones_totales = 0, colisiones;
+    tabla_cerrada diccionario_lineal, diccionario_cuadratica, diccionario_doble;
 
-    // TABLA CERRADA LINEAL
-    printf("***TABLA CERRADA LINEAL\n");
-    inicializar_cerrada(&diccionario_lineal, TAM_TEST);
-    for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_lineal, TAM_TEST, ndispersion, resolucion_lineal);
-    }
-    mostrar_cerrada(diccionario_lineal, TAM_TEST);
-    printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
+    realizar_test(&diccionario_lineal, TAM_TEST, claves, num_claves,
+                  ndispersion, resolucion_lineal, "LINEAL");
+    realizar_test(&diccionario_cuadratica, TAM_TEST, claves, num_claves,
+                  ndispersion, resolucion_cuadratica, "CUADRATICA");
+    realizar_test(&diccionario_doble, TAM_TEST, claves, num_claves,
+                  ndispersion, resolucion_doble, "DOBLE");
 
-    // Búsquedas en la tabla lineal
-    for (int i = 0; i < num_claves; i++) {
-        int pos = buscar_cerrada(claves[i], diccionario_lineal, TAM_TEST, &colisiones, ndispersion, resolucion_lineal);
-        printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
-    }
-    // Búsqueda de una clave no insertada
-    buscar_cerrada("CARLOS", diccionario_lineal, TAM_TABLA, &colisiones, ndispersion, resolucion_lineal);
-    printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
-
-    //TABLA CERRADA CUADRATICA
-    printf("***TABLA CERRADA CUADRATICA\n");
-    inicializar_cerrada(&diccionario_cuadratica, TAM_TEST);
-    colisiones_totales = 0;
-    for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_cuadratica, TAM_TEST, ndispersion, resolucion_cuadratica);
-    }
-    mostrar_cerrada(diccionario_cuadratica, TAM_TEST);
-    printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
-
-    // Búsquedas en la tabla cuadrática
-    for (int i = 0; i < num_claves; i++) {
-        int pos = buscar_cerrada(claves[i], diccionario_cuadratica, TAM_TABLA, &colisiones, ndispersion, resolucion_cuadratica);
-        printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
-    }
-    // Búsqueda de una clave no insertada
-    buscar_cerrada("CARLOS", diccionario_cuadratica, TAM_TABLA, &colisiones, ndispersion, resolucion_cuadratica);
-    printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
-
-    //TABLA CERRADA DOBLE
-    printf("***TABLA CERRADA DOBLE\n");
-    inicializar_cerrada(&diccionario_doble, TAM_TEST);
-    colisiones_totales = 0;
-    for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_doble, TAM_TEST, ndispersion, resolucion_doble);
-    }
-    mostrar_cerrada(diccionario_doble, TAM_TEST);
-    printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
-
-    // Búsquedas en la tabla doble
-    for (int i = 0; i < num_claves; i++) {
-        int pos = buscar_cerrada(claves[i], diccionario_doble, TAM_TABLA, &colisiones, ndispersion, resolucion_doble);
-        printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
-    }
-
-    // Búsqueda de una clave no insertada
-    buscar_cerrada("CARLOS", diccionario_doble, TAM_TABLA, &colisiones, ndispersion, resolucion_doble);
-    printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
-
-    // Liberación de memoria
     free(diccionario_lineal);
     free(diccionario_cuadratica);
     free(diccionario_doble);
