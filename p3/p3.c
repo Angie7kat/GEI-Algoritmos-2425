@@ -11,6 +11,7 @@
 #define LONGITUD_SINONIMOS 300
 #define TAM_TABLA 38197
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
+#define K 1000
 
 typedef struct entrada_ {
     int ocupada;
@@ -221,102 +222,127 @@ void tests() {
     free(diccionario_cuadratica);
     free(diccionario_doble);
 }
-/*
-//COMPLETAR AQUI CON TU COTA
-void escogerCota(int tipoDispersion, int tipoResolucion, double t, double* x, 
-double* y, double* z, int i){
 
-    if(tipoDispersion == 1){ //dispersionA
-        if(tipoResolucion == 1){
-            *x=t/
-            *y=t/
-            *z=t/
-        }else if(tipoResolucion == 2){
-            *x=t/
-            *y=t/
-            *z=t/
-        }else{
-            *x=t/
-            *y=t/
-            *z=t/
+
+void escogerCota(int tipoDispersion, int tipoResolucion, double t, double* x, 
+                 double* y, double* z, int i) {
+    if(tipoDispersion == 1) { //dispersionA
+        if(tipoResolucion == 1) {
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
+        } else if(tipoResolucion == 2) {
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
+        } else {
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
         }
-    }else{ //dispersionB
-         if(tipoResolucion == 1){ 
-            *x=t/
-            *y=t/
-            *z=t/
-        }else if(tipoResolucion == 2){
-            *x=t/
-            *y=t/
-            *z=t/
-        }else{ 
-            *x=t/
-            *y=t/
-            *z=t/
+    } else { //dispersionB
+        if(tipoResolucion == 1) { 
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
+        } else if(tipoResolucion == 2) {
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
+        } else { 
+            *x = t / pow(i,0.8);  // subestimada
+            *y = t / i;             // ajustada
+            *z = t / ( i * log(i));        // sobrestimada
         }
     }
 }
 
-double medirTiempoBuscarNClaves(int n,
-                 unsigned int (*dispersion)(char *, int),
-                 unsigned int (*resol_colisiones)(int, int),
-                 char[][MAX_CLAVE] claves){
-    int i;
+double medirTiempoBuscarNClaves(int n, unsigned int (*dispersion)(char *, int),
+                                unsigned int (*resol_colisiones)(int, int),
+                                char claves[][LONGITUD_CLAVE], tabla_cerrada diccionario) {
+    int i, colisiones;
+    double ta, tb;
+    
     ta = microsegundos();
-    //COMO TIENES QUE BUSCAR N CLAVES (N = A LA I DEL FOR DE MEDIR TIEMPO) VAS A TENER QUE DE ALGUNA MANERA GENERAR
-    //UN ARRAY DE CLAVES A BUSCAR YO VOY A PONER QUE ES DE TIPO char[][MAX_CLAVE]
-    for(i = 0;i<n;i++){
-              buscar_cerrada(claves[i], diccionario, n, &colisiones, 
-                                      dispersion, resol_colisiones);
+    for(i = 0; i < n; i++) {
+        buscar_cerrada(claves[i], diccionario, TAM_TABLA, &colisiones, 
+                       dispersion, resol_colisiones);
     }
     tb = microsegundos();            
     return tb - ta;                 
 }
 
-double medirTiempoBuscarNClavesTPequenos(int n,
-                 unsigned int (*dispersion)(char *, int),
-                 unsigned int (*resol_colisiones)(int, int),
-                 char[][MAX_CLAVE] claves){
-    int i,j;
-    ta = microsegundos();
-    //COMO TIENES QUE BUSCAR N CLAVES (N = A LA I DEL FOR DE MEDIR TIEMPO) VAS A TENER QUE DE ALGUNA MANERA GENERAR
-    //UN ARRAY DE CLAVES A BUSCAR YO VOY A PONER QUE ES DE TIPO char[][MAX_CLAVE]
-    for(j=0;j<K;j++){
-            for(i = 0;i<n;i++){
-                buscar_cerrada(claves[i], diccionario, n, &colisiones, 
-                                        dispersion, resol_colisiones);
-            }
-    }
+double medirTiempoBuscarNClavesTPequenos(int n, unsigned int (*dispersion)(char *, int),
+                                         unsigned int (*resol_colisiones)(int, int),
+                                         char claves[][LONGITUD_CLAVE], tabla_cerrada diccionario) {
+    int i, j, colisiones;
+    double ta, tb;
     
+    ta = microsegundos();
+    for(j = 0; j < K; j++) {
+        for(i = 0; i < n; i++) {
+            buscar_cerrada(claves[i], diccionario, TAM_TABLA, &colisiones, 
+                           dispersion, resol_colisiones);
+        }
+    }
     tb = microsegundos();            
-    return (tb - ta)/K;                 
+    return (tb - ta) / K;                 
 }
 
-void medirTiempo(int tipoDispersion,int tipoResolucion,
+void medirTiempo(int tipoDispersion, int tipoResolucion,
                  unsigned int (*dispersion)(char *, int),
-                 unsigned int (*resol_colisiones)(int, int)){
-    double ta, tb, t, x = 0, y = 0, z = 0; int i, ok;
-    char[][MAX_CLAVE] claves; //Leer abajo
-    for(i = 250; i <= 16000; i = i * 2){
-        //GENERAR AQUI ARRAY CLAVES ALEATORIAS (ASUMO QUE ES DE TIPO char[][MAX_CLAVES] Y SE LLAMA CLAVES
-        t = medirTiempoBuscarNClaves(i,dispersion,resol_colisiones,claves);
-        ok=0;
-        if(t < 500){        
-            t = medirTiempoBuscarNClavesTPequenos(i,dispersion,
-                                      resol_colisiones,claves);
-            ok=1;
+                 unsigned int (*resol_colisiones)(int, int)) {
+    double t, x = 0, y = 0, z = 0;
+    int i, ok;
+    char claves[16000][LONGITUD_CLAVE];
+    tabla_cerrada diccionario;
+    
+    inicializar_cerrada(&diccionario, TAM_TABLA);
+    
+    // Generar claves aleatorias
+    for (i = 0; i < 16000; i++) {
+        sprintf(claves[i], "clave%d", rand());
+        insertar_cerrada(claves[i], "", diccionario, TAM_TABLA, dispersion, resol_colisiones);
+    }
+    
+    printf("    n    \t    t(n)    \t    t(n)/f(n)    \t    t(n)/g(n)    \t    t(n)/h(n)    \n");
+    
+    for(i = 125; i <= 16000; i = i * 2) {
+        t = medirTiempoBuscarNClaves(i, dispersion, resol_colisiones, claves, diccionario);
+        ok = 0;
+        if(t < 500) {        
+            t = medirTiempoBuscarNClavesTPequenos(i, dispersion, resol_colisiones, claves, diccionario);
+            ok = 1;
         }
-        escogerCota(tipoDispersion,tipoResolucion,t,&x,&y,&z,i);
-        if(ok == 0){
-            printf("%8d\t%24.7f\t%24.7lf\t%24.7lf\t%24.7lf\n",i,t,x,y,z);   
-        }else{
-            printf("%8d\t%24.7f%s\t%24.7lf\t%24.7lf\t%24.7lf\n",i,t,"*",x,y,z);
+        escogerCota(tipoDispersion, tipoResolucion, t, &x, &y, &z, i);
+        if(ok == 0) {
+            printf("%8d\t%12.4f\t%18.10f\t%18.10f\t%18.10f\n", i, t, x, y, z);   
+        } else {
+            printf("%8d\t%12.4f*\t%18.10f\t%18.10f\t%18.10f\n", i, t, x, y, z);
         }
-    }    
+    }
+    
+    free(diccionario);
 }
-*/
 
 int main() {
     tests();
+       printf("\nMedición de tiempos para dispersión A y resolución lineal:\n");
+    medirTiempo(1, 1, dispersionA, resolucion_lineal);
+    
+    printf("\nMedición de tiempos para dispersión A y resolución cuadrática:\n");
+    medirTiempo(1, 2, dispersionA, resolucion_cuadratica);
+    
+    printf("\nMedición de tiempos para dispersión A y resolución doble:\n");
+    medirTiempo(1, 3, dispersionA, resolucion_doble);
+    
+    printf("\nMedición de tiempos para dispersión B y resolución lineal:\n");
+    medirTiempo(2, 1, dispersionB, resolucion_lineal);
+    
+    printf("\nMedición de tiempos para dispersión B y resolución cuadrática:\n");
+    medirTiempo(2, 2, dispersionB, resolucion_cuadratica);
+    
+    printf("\nMedición de tiempos para dispersión B y resolución doble:\n");
+    medirTiempo(2, 3, dispersionB, resolucion_doble);
     return 0;
 }
