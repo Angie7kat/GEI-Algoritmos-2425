@@ -5,9 +5,8 @@
 #include <sys/time.h>
 #include <string.h>
 #include <stdbool.h>
-#define K  1000
 
-#define TAM_TEST 10
+#define TAM_TEST 11
 #define LONGITUD_CLAVE 30
 #define LONGITUD_SINONIMOS 300
 #define TAM_TABLA 38197
@@ -18,6 +17,11 @@ typedef struct entrada_ {
     char clave[LONGITUD_CLAVE];
     char sinonimos[LONGITUD_SINONIMOS];
 } entrada;
+
+typedef struct {
+char clave [LONGITUD_CLAVE];
+char sinonimos [LONGITUD_SINONIMOS];
+} item;
 
 typedef int pos;
 typedef entrada *tabla_cerrada;
@@ -47,6 +51,13 @@ unsigned int dispersionB(char *clave, int tamTabla) {
     return valor % tamTabla;
 }
 
+unsigned int ndispersion(char *clave, int tamTabla) {
+    if (strcmp(clave, "ANA")==0) return 7;
+    if (strcmp(clave, "JOSE")==0) return 7;
+    if (strcmp(clave, "OLGA")==0) return 7;
+    return 6;
+}
+
 void inicializar_cerrada(tabla_cerrada *diccionario, int tam) {
     *diccionario = (tabla_cerrada)malloc(tam * sizeof(entrada));
     for (int i = 0; i < tam; i++) {
@@ -54,13 +65,12 @@ void inicializar_cerrada(tabla_cerrada *diccionario, int tam) {
     }
 }
 
-// Función de resolución de colisiones lineal
 unsigned int resolucion_lineal(int pos_ini, int num_intento) {
-    return (pos_ini + num_intento) % TAM_TABLA;
+    return (pos_ini + num_intento);
 }
 
 unsigned int resolucion_cuadratica(int pos_ini, int num_intento) {
-    return (pos_ini + num_intento * num_intento) % TAM_TABLA;
+    return (pos_ini + num_intento * num_intento);
 }
 
 unsigned int resolucion_doble(int pos_ini, int num_intento) {
@@ -69,37 +79,44 @@ unsigned int resolucion_doble(int pos_ini, int num_intento) {
 
 pos buscar_cerrada(char *clave, tabla_cerrada diccionario, int tam,
                    int *colisiones, unsigned int (*dispersion)(char *, int),
-                   unsigned int (*resol_colisiones)(int pos_ini, int num_intento)) {
+                   unsigned int (*resol_colisiones)(int pos_ini, 
+                   int num_intento)) {
     int i = 0;
     pos inicial = dispersion(clave, tam);
     pos actual = inicial;
 
     *colisiones = 0;
 
-    while (diccionario[actual].ocupada && strcmp(diccionario[actual].clave, clave) != 0) {
+    while (diccionario[actual].ocupada && 
+            strcmp(diccionario[actual].clave, clave) != 0) {
         i++;
         actual = resol_colisiones(inicial, i);
         (*colisiones)++;
-        if (actual == inicial) return -1; // Tabla llena
+        if (actual == inicial) return -1;
     }
-
     return actual;
 }
 
 int insertar_cerrada(char *clave, char *sinonimos,
-                     tabla_cerrada *diccionario, int tam,
+                     tabla_cerrada diccionario, int tam,
                      unsigned int (*dispersion)(char *, int),
-                     unsigned int (*resol_colisiones)(int pos_ini, int num_intento)) {
-    int colisiones;
-    pos lugar = buscar_cerrada(clave, *diccionario, tam, &colisiones, dispersion, resol_colisiones);
+                     unsigned int (*resol_colisiones)(int pos_ini, 
+                     int num_intento)) {
 
-    if (lugar == -1) return -1; // Error: tabla llena
+    unsigned int pos_ini = dispersion(clave, tam);
+    unsigned int pos = pos_ini;
+    int colisiones = 0;
 
-    if (!(*diccionario)[lugar].ocupada) {
-        strcpy((*diccionario)[lugar].clave, clave);
-        strcpy((*diccionario)[lugar].sinonimos, sinonimos);
-        (*diccionario)[lugar].ocupada = 1;
+    while (diccionario[pos].ocupada) {
+        colisiones++;
+        pos = resol_colisiones(pos_ini, colisiones) % tam;
     }
+
+    diccionario[pos].ocupada = 1;
+    strncpy(diccionario[pos].clave, clave, LONGITUD_CLAVE - 1);
+    diccionario[pos].clave[LONGITUD_CLAVE - 1] = '\0';
+    strncpy(diccionario[pos].sinonimos, sinonimos, LONGITUD_SINONIMOS - 1);
+    diccionario[pos].sinonimos[LONGITUD_SINONIMOS - 1] = '\0';
 
     return colisiones;
 }
@@ -107,88 +124,107 @@ int insertar_cerrada(char *clave, char *sinonimos,
 void mostrar_cerrada(tabla_cerrada diccionario, int tam) {
     for (int i = 0; i < tam; i++) {
         if (diccionario[i].ocupada) {
-            printf("%d - (%s: %s)\n", i, diccionario[i].clave, diccionario[i].sinonimos);
+            printf("%d - (%s)\n", i, diccionario[i].clave);
         } else {
             printf("%d - \n", i);
         }
     }
 }
 
-int leer_sinonimos(tabla_cerrada *diccionario,
-                   unsigned int (*dispersion)(char *, int),
-                   unsigned int (*resol_colisiones)(int pos_ini, int num_intento)) {
-    FILE *file = fopen("sinonimos.txt", "r");
-    if (file == NULL) {
-        printf("No se pudo abrir sinonimos.txt\n");
-        return -1;
+int leer_sinonimos(item datos[]) {
+    char c;
+    int i, j;
+    FILE *archivo;
+    if ((archivo = fopen("sinonimos.txt", "r")) == NULL) {
+        printf("Error al abrir 'sinonimos.txt'\n");
+        return(EXIT_FAILURE);
     }
-
-    char clave[LONGITUD_CLAVE];
-    char sinonimos[LONGITUD_SINONIMOS];
-    int total_colisiones = 0;
-    int colisiones;
-
-    while (fscanf(file, "%s\t%[^\n]", clave, sinonimos) == 2) {
-        colisiones = insertar_cerrada(clave, sinonimos, diccionario, TAM_TABLA, dispersion, resol_colisiones);
-        if (colisiones == -1) {
-            printf("Error: Tabla llena al insertar %s\n", clave);
-            fclose(file);
-            return -1;
+    for (i = 0; fscanf(archivo, "%s", datos[i].clave) != EOF; i++) {
+        if ((c = fgetc(archivo)) != '\t') {
+        printf("Error al leer el tabulador\n");
+        return(EXIT_FAILURE);
         }
-        total_colisiones += colisiones;
+        for (j = 0; (c = fgetc(archivo)) != '\n'; j++) {
+            if (j < LONGITUD_SINONIMOS - 1)
+                datos[i].sinonimos[j] = c;
+        }
+        datos[i].sinonimos[MIN(j, LONGITUD_SINONIMOS -1)] = '\0';
     }
-
-    fclose(file);
-    return total_colisiones;
+    if (fclose(archivo) != 0) {
+        printf("Error al cerrar el fichero\n");
+        return(EXIT_FAILURE);
+    }
+    return(i);
 }
 
 void tests() {
-    // Claves y configuraciones iniciales
     char *claves[] = {"ANA", "LUIS", "JOSE", "OLGA", "ROSA", "IVAN"};
     int num_claves = 6;
     tabla_cerrada diccionario_lineal, diccionario_cuadratica;
+    tabla_cerrada diccionario_doble;
     int colisiones_totales = 0, colisiones;
 
-    // ***TABLA CERRADA LINEAL
+    // TABLA CERRADA LINEAL
     printf("***TABLA CERRADA LINEAL\n");
     inicializar_cerrada(&diccionario_lineal, TAM_TEST);
     for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", &diccionario_lineal, TAM_TEST, dispersionA, resolucion_lineal);
+        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_lineal, TAM_TEST, ndispersion, resolucion_lineal);
     }
     mostrar_cerrada(diccionario_lineal, TAM_TEST);
     printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
 
     // Búsquedas en la tabla lineal
     for (int i = 0; i < num_claves; i++) {
-        int pos = buscar_cerrada(claves[i], diccionario_lineal, TAM_TEST, &colisiones, dispersionA, resolucion_lineal);
+        int pos = buscar_cerrada(claves[i], diccionario_lineal, TAM_TEST, &colisiones, ndispersion, resolucion_lineal);
         printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
     }
     // Búsqueda de una clave no insertada
-    buscar_cerrada("CARLOS", diccionario_lineal, TAM_TEST, &colisiones, dispersionA, resolucion_lineal);
-    printf("No encuentro: CARLOS, colisiones: %d\n\n", colisiones);
+    buscar_cerrada("CARLOS", diccionario_lineal, TAM_TABLA, &colisiones, ndispersion, resolucion_lineal);
+    printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
 
-    // ***TABLA CERRADA CUADRATICA
+    //TABLA CERRADA CUADRATICA
     printf("***TABLA CERRADA CUADRATICA\n");
     inicializar_cerrada(&diccionario_cuadratica, TAM_TEST);
     colisiones_totales = 0;
     for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", &diccionario_cuadratica, TAM_TEST, dispersionA, resolucion_cuadratica);
+        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_cuadratica, TAM_TEST, ndispersion, resolucion_cuadratica);
     }
     mostrar_cerrada(diccionario_cuadratica, TAM_TEST);
     printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
 
     // Búsquedas en la tabla cuadrática
     for (int i = 0; i < num_claves; i++) {
-        int pos = buscar_cerrada(claves[i], diccionario_cuadratica, TAM_TABLA, &colisiones, dispersionA, resolucion_cuadratica);
+        int pos = buscar_cerrada(claves[i], diccionario_cuadratica, TAM_TABLA, &colisiones, ndispersion, resolucion_cuadratica);
         printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
     }
     // Búsqueda de una clave no insertada
-    buscar_cerrada("CARLOS", diccionario_cuadratica, TAM_TABLA, &colisiones, dispersionA, resolucion_cuadratica);
+    buscar_cerrada("CARLOS", diccionario_cuadratica, TAM_TABLA, &colisiones, ndispersion, resolucion_cuadratica);
+    printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
+
+    //TABLA CERRADA DOBLE
+    printf("***TABLA CERRADA DOBLE\n");
+    inicializar_cerrada(&diccionario_doble, TAM_TEST);
+    colisiones_totales = 0;
+    for (int i = 0; i < num_claves; i++) {
+        colisiones_totales += insertar_cerrada(claves[i], "", diccionario_doble, TAM_TEST, ndispersion, resolucion_doble);
+    }
+    mostrar_cerrada(diccionario_doble, TAM_TEST);
+    printf("Numero total de colisiones al insertar los elementos: %d\n", colisiones_totales);
+
+    // Búsquedas en la tabla doble
+    for (int i = 0; i < num_claves; i++) {
+        int pos = buscar_cerrada(claves[i], diccionario_doble, TAM_TABLA, &colisiones, ndispersion, resolucion_doble);
+        printf("Al buscar: %s, encuentro: %s, colisiones: %d\n", claves[i], (pos != -1 ? claves[i] : "NO ENCONTRADO"), colisiones);
+    }
+
+    // Búsqueda de una clave no insertada
+    buscar_cerrada("CARLOS", diccionario_doble, TAM_TABLA, &colisiones, ndispersion, resolucion_doble);
     printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
 
     // Liberación de memoria
     free(diccionario_lineal);
     free(diccionario_cuadratica);
+    free(diccionario_doble);
 }
 /*
 //COMPLETAR AQUI CON TU COTA
