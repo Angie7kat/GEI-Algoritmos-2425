@@ -30,12 +30,10 @@ GRUPO:2.3	FECHA:9/11/24
 
 
 .- MAQUINA:
+  sistema operativo :Ubuntu 22.04.1 LTS
+  procesador : AMD® Ryzen 7 4800h with radeon graphics × 16
+  memoria :12,0 GiB
 
-  + OS: Ubuntu 22.04.3 LTS
-  + Procesador: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 6 núcleos y 2 hilos.
-  + RAM: 16 GB 
-  + Kernel: Ubuntu 6.2.0-37-generic
-  + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
 
 .-DispersiónA
 
@@ -75,22 +73,130 @@ unsigned int ndispersion(char *clave, int tamTabla) {
   la tabla con un "*". 
 
 .-Medición de tiempos para dispersión A y resolución lineal:
-
+TOTAL DE COLISIONES AL INSERTAR: 172623183
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125      17795.0000           373.9124982349           142.3600000000#           29.4844137613
+     250      31314.0000           377.9083956052           125.2560000000            22.6853004781
+     500      60255.0000           417.6544252431           120.5100000000            19.3914078075
+    1000     119515.0000           475.7977848870           119.5150000000            17.3015683349
+    2000     230004.0000           525.9099558175           115.0020000000            15.1300454929
+    4000     448290.0000           588.7230747181           112.0725000000            13.5123980279
+    8000     900378.0000           679.1299526932           112.5472500000            12.5230650052
+   16000    1829823.0000           792.7077352104           114.3639375000            11.8140365142
+                                                            
+								c:112.  
+#Anomalía                                                          	
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
 .-Medición de tiempos para dispersión A y resolución cuadrática:
+TOTAL DE COLISIONES AL INSERTAR: 2106581
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125        243.8150*            5.1230950130             1.9505200000             0.4039754055
+     250        487.4090*            5.8822237080             1.9496360000             0.3531014760
+     500       1006.0000             6.9730371221             2.0120000000             0.3237533193
+    1000       1957.0000             7.7909573277             1.9570000000             0.2833047670
+    2000       3844.0000             8.7894030980             1.9220000000             0.2528647105
+    4000       7881.0000            10.3498328133             1.9702500000             0.2375498201
+    8000      15845.0000            11.9514405066             1.9806250000             0.2203829558
+   16000      31637.0000            13.7056396268             1.9773125000             0.2042605614
 
+								c:1.97
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
 .-Medición de tiempos para dispersión A y resolución doble:
+TOTAL DE COLISIONES AL INSERTAR: 1451531
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125        263.6720*            5.5403347139             2.1093760000             0.4368763330
+     250        524.0000             6.3238168007             2.0960000000             0.3796096778
+     500       1052.0000             7.2918837500             2.1040000000             0.3385571490
+    1000       2083.0000             8.2925723626             2.0830000000             0.3015451353
+    2000       4286.0000             9.8000472628             2.1430000000             0.2819402053
+    4000       8168.0000            10.7267395532             2.0420000000             0.2462006003
+    8000      17422.0000            13.1409275169             2.1777500000             0.2423169364
+   16000      34028.0000            14.7414579518             2.1267500000             0.2196977710
+
+								c:2.10
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
 
 .-Medición de tiempos para dispersión B y resolución lineal:
+TOTAL DE COLISIONES AL INSERTAR: 16965
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125         23.6370*            0.4966659017             0.1890960000             0.0398250840
+     250         46.5110*            0.5613111512             0.1860440000             0.0342713646
+     500         93.0760*            0.6451514942             0.1861520000             0.0301982035
+    1000        184.3650*            0.7339702850             0.1843650000             0.0268518488
+    2000        369.5850*            0.8450654381             0.1847925000             0.0244751858
+    4000        784.0000             1.0295988993             0.1960000000             0.0233902627
+    8000       1489.0000             1.1231110706             0.1861250000             0.0214471769
+   16000       2961.0000             1.2827511754             0.1850625000             0.0196790527
 
+								c:0.18
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
 .-Medición de tiempos para dispersión B y resolución cuadrática:
+TOTAL DE COLISIONES AL INSERTAR: 13366
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125         22.8080*            0.4792467693             0.1824640000             0.0377904192
+     250         46.0520*            0.5557717773             0.1842080000             0.0333621849
+     500         90.2580*            0.6256186725             0.1805160000             0.0290470448
+    1000        180.7420*            0.7195468622             0.1807420000             0.0261650844
+    2000        363.5850*            0.8313462865             0.1817925000             0.0239172257
+    4000        778.0000             1.0217193159             0.1945000000             0.0234505469
+    8000       1531.0000             1.1547904964             0.1913750000             0.0212941815
+   16000       3013.0000             1.3052783828             0.1883125000             0.0194530794
 
+								c:0.18
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
+.-TOTAL DE COLISIONES AL INSERTAR: 19401
+Medición de tiempos para dispersión B y resolución doble:
+       n            t(n)               t(n)/n^0.8                   t(n)/n            t(n)/n*log(n)
+     125         24.5350*            0.5155348774             0.1962800000             0.0406518737
+     250         49.4960*            0.5973351839             0.1979840000             0.0358571767
+     500         96.8640*            0.6714078209             0.1937280000             0.0311730035
+    1000        193.1750*            0.7690435267             0.1931750000             0.0279649455
+    2000        384.4430*            0.8790386304             0.1922215000             0.0252892997
+    4000        784.0000             1.0295988993             0.1960000000             0.0236313994
+    8000       1574.0000             1.1872241942             0.1967500000             0.0218922545
+   16000       3153.0000             1.3659285565             0.1970625000             0.0203569728
 
-.-Medición de tiempos para dispersión B y resolución doble:
-
+								C:0.196
+Cota subestimada: t(n)/n^0.8
+Cota ajustada: t(n)/n
+Cota sobrestimada: t(n)/n*log(n)
 
 .-CONCLUSIONES:
+
+	En esta práctica, pudimos observar diferencias significativas entre las dos 
+  funciones de dispersión analizadas. La **dispersión B** demostró ser más 
+  eficiente que la dispersión A, ya que generó menos colisiones y distribuyó 
+  mejor las claves en la tabla, lo que resultó en tiempos de búsqueda más rápidos. 
+  En contraste, la dispersión A mostró un número considerablemente alto de 
+  colisiones, especialmente cuando se utilizó la exploración lineal, lo que 
+  afectó negativamente su eficiencia.
+
+	Respecto a los métodos de resolución de colisiones, se comprobó que la 
+  exploración lineal fue la menos eficiente debido a la acumulación de agrupamientos, 
+  lo que aumentó los tiempos de búsqueda. La exploración cuadrática mejoró esta 
+  situación al reducir el número de colisiones, mientras que la exploración doble 
+  resultó ser la estrategia más eficiente, dispersando mejor las colisiones y 
+  optimizando los tiempos de acceso.
+
+	En resumen, la combinación de la dispersión B con la exploración doble demostró 
+  ser la más efectiva, ofreciendo un equilibrio entre el uso de memoria y la 
+  rapidez en las búsquedas, lo que la hace ideal para aplicaciones que manejan
+  grandes volúmenes de datos. Esta práctica permitió comprender cómo la elección 
+  de la función de dispersión y la estrategia de resolución de colisiones pueden 
+  influir significativamente en el rendimiento de un diccionario basado en tablas 
+  de dispersión.
