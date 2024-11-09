@@ -239,31 +239,31 @@ void escogerCota(int tipoDispersion, int tipoResolucion, double t, double* x,
                  double* y, double* z, int i) {
     if(tipoDispersion == 1) { //dispersionA
         if(tipoResolucion == 1) {           // lineal
-            *x = t / pow(i,1.9);        // subestimada
-            *y = t / pow(i,2.014);     // ajustada
-            *z = t / pow(i,2.2);        // sobrestimada
+            *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         } else if(tipoResolucion == 2) {    // cuadrática
-            *x = t / pow(i,1.6);        // subestimada
-            *y = t / pow(i,1.805);      // ajustada
-            *z = t / pow(i,2);        // sobrestimada
+            *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         } else {                            // doble
-            *x = t / pow(i,1.6);        // subestimada
-            *y = t / pow(i,1.94);      // ajustada
-            *z = t / pow(i,2.1);         // sobrestimada
+            *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         }
     } else { //dispersionB
         if(tipoResolucion == 1) {           // lineal
-            *x = t / pow(i,1.9);        // subestimada
-            *y = t / pow(i,2.014);     // ajustada
-            *z = t / pow(i,2.2);        // sobrestimada
+            *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         } else if(tipoResolucion == 2) {    // cuadrática
-            *x = t / pow(i,1.6);        // subestimada
-            *y = t / pow(i,1.805);      // ajustada
-            *z = t / pow(i,2);        // sobrestimada
+           *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         } else {                            // doble
-            *x = t / pow(i,1.6);        // subestimada
-            *y = t / pow(i,1.94);      // ajustada
-            *z = t / pow(i,2.1);         // sobrestimada
+            *x = t / pow(i,0.8);        // subestimada
+            *y = t / pow(i,1);     // ajustada
+            *z = t / i * log(i);        // sobrestimada
         }
     }
 }

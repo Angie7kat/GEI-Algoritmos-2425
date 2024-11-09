@@ -5,7 +5,24 @@ AUTOR2: Angela Marlene Clemente López       LOGIN2: angela.clemente
 GRUPO:2.3	FECHA:9/11/24
 
 .-INTRODUCCION:
+    En esta práctica se implementarán y analizarán diccionarios de datos basados en
+  tablas de dispersión para la búsqueda eficiente de sinónimos. El objetivo es 
+  diseñar un programa que, a partir de un archivo (sinonimos.txt) con 19,062 
+  entradas, permita buscar sinónimos utilizando diferentes estrategias de 
+  dispersión y manejo de colisiones. Se compararán tres métodos de dispersión 
+  cerrada; Exploración lineal, Exploración cuadrática y Exploración doble.
 
+    Utilizaremos dos funciones de dispersión (dispersionA y dispersionB) y 
+  analizaremos su rendimiento con un factor de carga de 0.5 en tablas de tamaño 
+  38,197.
+
+    Las tareas incluyen; Implementar y validar las operaciones del diccionario,medir 
+  el número de colisiones y los tiempos de búsqueda al cargar todas las palabras.
+  Comparar el rendimiento de las estrategias para determinar cuál es más eficiente 
+  en cuanto a colisiones y tiempos.
+
+    El análisis final permitirá evaluar la eficiencia de búsqueda en tablas de 
+  dispersión y su complejidad empírica.
 
 .-UNIDADES:
 
@@ -22,12 +39,32 @@ GRUPO:2.3	FECHA:9/11/24
 
 .-DispersiónA
 
-
+unsigned int dispersionA(char *clave, int tamTabla) {
+    int i, n = MIN(8, strlen(clave));
+    unsigned int valor = clave[0];
+    for (i = 1; i < n; i++)
+        valor += clave[i];
+    return valor % tamTabla;
+}
 
 .-DispersiónB
 
+unsigned int dispersionB(char *clave, int tamTabla) {
+    int i, n = MIN(8, strlen(clave));
+    unsigned int valor = clave[0];
+    for (i = 1; i < n; i++)
+        valor = (valor<<5) + clave[i];
+    return valor % tamTabla;
+}
 
 .-DispersiónN
+
+unsigned int ndispersion(char *clave, int tamTabla) {
+    if (strcmp(clave, "ANA") == 0) return 7;
+    if (strcmp(clave, "JOSE") == 0) return 7;
+    if (strcmp(clave, "OLGA") == 0) return 7;
+    return 6;
+}
 
 .-Medir Tiempos:
 
@@ -37,6 +74,23 @@ GRUPO:2.3	FECHA:9/11/24
   la hora del sistema antes de ejecutar el algoritmo). Estos casos se marcarán en
   la tabla con un "*". 
 
-.-Resultados 
+.-Medición de tiempos para dispersión A y resolución lineal:
+
+
+.-Medición de tiempos para dispersión A y resolución cuadrática:
+
+
+.-Medición de tiempos para dispersión A y resolución doble:
+
+
+.-Medición de tiempos para dispersión B y resolución lineal:
+
+
+.-Medición de tiempos para dispersión B y resolución cuadrática:
+
+
+
+.-Medición de tiempos para dispersión B y resolución doble:
+
 
 .-CONCLUSIONES:
