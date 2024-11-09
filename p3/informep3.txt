@@ -1,0 +1,42 @@
+TITULO: Práctica 3 -> DICCIONARIO DE DATOS
+
+AUTOR1: Ángela Fouz Suárez          LOGIN1: angela.fouz
+AUTOR2: Angela Marlene Clemente López       LOGIN2: angela.clemente
+GRUPO:2.3	FECHA:9/11/24
+
+.-INTRODUCCION:
+
+
+.-UNIDADES:
+
+  Las unidades empleadas en todas las pruebas son en microsegundos(micros).
+
+
+.- MAQUINA:
+
+  + OS: Ubuntu 22.04.3 LTS
+  + Procesador: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 6 núcleos y 2 hilos.
+  + RAM: 16 GB 
+  + Kernel: Ubuntu 6.2.0-37-generic
+  + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+
+.-DispersiónA
+
+
+
+.-DispersiónB
+
+
+.-DispersiónN
+
+.-Medir Tiempos:
+
+	Para tiempos menores de 500ms calcularemos los tiempos de esta forma:
+  (tb-ta)/k (donde k son las repeteciones, en este caso 1000; tb, que corresponde
+  a la hora del sistema después de ejecutar el algoritmo; y ta, que corresponde a
+  la hora del sistema antes de ejecutar el algoritmo). Estos casos se marcarán en
+  la tabla con un "*". 
+
+.-Resultados 
+
+.-CONCLUSIONES:

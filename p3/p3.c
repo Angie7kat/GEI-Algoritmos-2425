@@ -1,3 +1,11 @@
+/*
+TITULO: Práctica 3 -> DICCIONARIO DE DATOS
+
+AUTOR1: Ángela Fouz Suárez          LOGIN1: angela.fouz
+AUTOR2: Angela Marlene Clemente López       LOGIN2: angela.clemente
+GRUPO:2.3	FECHA:9/11/24
+*/
+
 #include <time.h>
 #include <math.h>
 #include <stdio.h>
@@ -20,21 +28,20 @@ typedef struct entrada_ {
 } entrada;
 
 typedef struct {
-char clave [LONGITUD_CLAVE];
-char sinonimos [LONGITUD_SINONIMOS];
+    char clave [LONGITUD_CLAVE];
+    char sinonimos [LONGITUD_SINONIMOS];
 } item;
 
 typedef int pos;
 typedef entrada *tabla_cerrada;
 
 double microsegundos() {
- struct timeval t;
- if(gettimeofday(&t, NULL) < 0)
-  return 0.0;
- return (t.tv_usec + t.tv_sec * 1000000.0);
+    struct timeval t;
+    if (gettimeofday(&t, NULL) < 0)
+        return 0.0;
+    return (t.tv_usec + t.tv_sec * 1000000.0);
 }
 
-// Función de dispersión A
 unsigned int dispersionA(char *clave, int tamTabla) {
     int i, n = MIN(8, strlen(clave));
     unsigned int valor = clave[0];
@@ -43,7 +50,6 @@ unsigned int dispersionA(char *clave, int tamTabla) {
     return valor % tamTabla;
 }
 
-// Función de dispersión B
 unsigned int dispersionB(char *clave, int tamTabla) {
     int i, n = MIN(8, strlen(clave));
     unsigned int valor = clave[0];
@@ -53,9 +59,9 @@ unsigned int dispersionB(char *clave, int tamTabla) {
 }
 
 unsigned int ndispersion(char *clave, int tamTabla) {
-    if (strcmp(clave, "ANA")==0) return 7;
-    if (strcmp(clave, "JOSE")==0) return 7;
-    if (strcmp(clave, "OLGA")==0) return 7;
+    if (strcmp(clave, "ANA") == 0) return 7;
+    if (strcmp(clave, "JOSE") == 0) return 7;
+    if (strcmp(clave, "OLGA") == 0) return 7;
     return 6;
 }
 
@@ -80,28 +86,29 @@ unsigned int resolucion_doble(int pos_ini, int num_intento) {
 
 pos buscar_cerrada(char *clave, tabla_cerrada diccionario, int tam,
                    int *colisiones, unsigned int (*dispersion)(char *, int),
-                   unsigned int (*resol_colisiones)(int pos_ini, int num_intento)) {
+                   unsigned int (*resol_colisiones)
+                   (int pos_ini, int num_intento)) {
     int i = 0;
     pos inicial = dispersion(clave, tam);
     pos actual = inicial;
 
     *colisiones = 0;
 
-    while (diccionario[actual].ocupada && strcmp(diccionario[actual].clave, clave) != 0) {
+    while (diccionario[actual].ocupada &&
+        strcmp(diccionario[actual].clave, clave) != 0) {
         i++;
         actual = resol_colisiones(inicial, i) % tam;
         (*colisiones)++;
-        if (i >= tam) return -1; // Stop if we've checked all positions
+        if (i >= tam) return -1;
     }
     return actual;
 }
 
-
 int insertar_cerrada(char *clave, char *sinonimos,
                      tabla_cerrada diccionario, int tam,
                      unsigned int (*dispersion)(char *, int),
-                     unsigned int (*resol_colisiones)(int pos_ini, 
-                     int num_intento)) {
+                     unsigned int (*resol_colisiones)
+                     (int pos_ini, int num_intento)) {
 
     unsigned int pos_ini = dispersion(clave, tam);
     unsigned int pos = pos_ini;
@@ -141,8 +148,8 @@ int leer_sinonimos(item datos[]) {
     }
     for (i = 0; fscanf(archivo, "%s", datos[i].clave) != EOF; i++) {
         if ((c = fgetc(archivo)) != '\t') {
-        printf("Error al leer el tabulador\n");
-        return(EXIT_FAILURE);
+            printf("Error al leer el tabulador\n");
+            return(EXIT_FAILURE);
         }
         for (j = 0; (c = fgetc(archivo)) != '\n'; j++) {
             if (j < LONGITUD_SINONIMOS - 1)
@@ -157,7 +164,8 @@ int leer_sinonimos(item datos[]) {
     return(i);
 }
 
-void mostrar_resultados(tabla_cerrada diccionario, int tam, int colisiones_totales,
+void mostrar_resultados(tabla_cerrada diccionario,
+                        int tam, int colisiones_totales,
                         char *claves[], int num_claves,
                         unsigned int (*dispersion)(char *, int),
                         unsigned int (*resol_colisiones)(int, int),
@@ -184,7 +192,8 @@ void mostrar_resultados(tabla_cerrada diccionario, int tam, int colisiones_total
     pos = buscar_cerrada("CARLOS", diccionario, tam, &colisiones,
                          dispersion, resol_colisiones);
     if (pos != -1 && strcmp(diccionario[pos].clave, "CARLOS") == 0) {
-        printf("Al buscar: CARLOS, encuentro: CARLOS, colisiones: %d\n", colisiones);
+        printf("Al buscar: CARLOS, encuentro: CARLOS,"
+               " colisiones: %d\n", colisiones);
     } else {
         printf("No encuentro: CARLOS, colisiones: %d\n", colisiones);
     }
@@ -198,68 +207,71 @@ void realizar_test(tabla_cerrada *diccionario, int tam, char *claves[],
     
     inicializar_cerrada(diccionario, tam);
     for (int i = 0; i < num_claves; i++) {
-        colisiones_totales += insertar_cerrada(claves[i], "", *diccionario,
-                                               tam, dispersion, resol_colisiones);
+        colisiones_totales += insertar_cerrada(claves[i], "",
+            *diccionario,tam, dispersion, resol_colisiones);
     }
     
-    mostrar_resultados(*diccionario, tam, colisiones_totales, claves, num_claves,
-                       dispersion, resol_colisiones, tipo_tabla);
+    mostrar_resultados(*diccionario, tam, colisiones_totales,
+        claves, num_claves,dispersion, resol_colisiones, tipo_tabla);
 }
 
 void tests() {
     char *claves[] = {"ANA", "LUIS", "JOSE", "OLGA", "ROSA", "IVAN"};
     int num_claves = 6;
-    tabla_cerrada diccionario_lineal, diccionario_cuadratica, diccionario_doble;
+    tabla_cerrada diccionario_lineal,diccionario_cuadratica,diccionario_doble;
 
     realizar_test(&diccionario_lineal, TAM_TEST, claves, num_claves,
-                  ndispersion, resolucion_lineal, "LINEAL");
+                  ndispersion, resolucion_lineal,
+                  "LINEAL");
     realizar_test(&diccionario_cuadratica, TAM_TEST, claves, num_claves,
-                  ndispersion, resolucion_cuadratica, "CUADRATICA");
+                  ndispersion, resolucion_cuadratica,
+                  "CUADRATICA");
     realizar_test(&diccionario_doble, TAM_TEST, claves, num_claves,
-                  ndispersion, resolucion_doble, "DOBLE");
+                  ndispersion, resolucion_doble,
+                  "DOBLE");
 
     free(diccionario_lineal);
     free(diccionario_cuadratica);
     free(diccionario_doble);
 }
 
-
-void escogerCota(int tipoDispersion, int tipoResolucion, double t, double* x, 
+void escogerCota(int tipoDispersion, int tipoResolucion, double t, double* x,
                  double* y, double* z, int i) {
     if(tipoDispersion == 1) { //dispersionA
-        if(tipoResolucion == 1) {
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
-        } else if(tipoResolucion == 2) {
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
-        } else {
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
+        if(tipoResolucion == 1) {           // lineal
+            *x = t / pow(i,1.9);        // subestimada
+            *y = t / pow(i,2.014);     // ajustada
+            *z = t / pow(i,2.2);        // sobrestimada
+        } else if(tipoResolucion == 2) {    // cuadrática
+            *x = t / pow(i,1.6);        // subestimada
+            *y = t / pow(i,1.805);      // ajustada
+            *z = t / pow(i,2);        // sobrestimada
+        } else {                            // doble
+            *x = t / pow(i,1.6);        // subestimada
+            *y = t / pow(i,1.94);      // ajustada
+            *z = t / pow(i,2.1);         // sobrestimada
         }
     } else { //dispersionB
-        if(tipoResolucion == 1) { 
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
-        } else if(tipoResolucion == 2) {
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
-        } else { 
-            *x = t / pow(i,0.8);  // subestimada
-            *y = t / i;             // ajustada
-            *z = t / ( i * log(i));        // sobrestimada
+        if(tipoResolucion == 1) {           // lineal
+            *x = t / pow(i,1.9);        // subestimada
+            *y = t / pow(i,2.014);     // ajustada
+            *z = t / pow(i,2.2);        // sobrestimada
+        } else if(tipoResolucion == 2) {    // cuadrática
+            *x = t / pow(i,1.6);        // subestimada
+            *y = t / pow(i,1.805);      // ajustada
+            *z = t / pow(i,2);        // sobrestimada
+        } else {                            // doble
+            *x = t / pow(i,1.6);        // subestimada
+            *y = t / pow(i,1.94);      // ajustada
+            *z = t / pow(i,2.1);         // sobrestimada
         }
     }
 }
 
 double medirTiempoBuscarNClaves(int n, unsigned int (*dispersion)(char *, int),
                                 unsigned int (*resol_colisiones)(int, int),
-                                char claves[][LONGITUD_CLAVE], tabla_cerrada diccionario) {
+                                char claves[][LONGITUD_CLAVE],
+                                tabla_cerrada diccionario) {
     int i, colisiones;
     double ta, tb;
     
@@ -272,9 +284,11 @@ double medirTiempoBuscarNClaves(int n, unsigned int (*dispersion)(char *, int),
     return tb - ta;                 
 }
 
-double medirTiempoBuscarNClavesTPequenos(int n, unsigned int (*dispersion)(char *, int),
-                                         unsigned int (*resol_colisiones)(int, int),
-                                         char claves[][LONGITUD_CLAVE], tabla_cerrada diccionario) {
+double medirTiempoBuscarNClavesTPequenos(int n,
+    unsigned int (*dispersion)(char *, int),
+    unsigned int (*resol_colisiones)(int, int),
+    char claves[][LONGITUD_CLAVE], tabla_cerrada diccionario) {
+
     int i, j, colisiones;
     double ta, tb;
     
@@ -289,60 +303,132 @@ double medirTiempoBuscarNClavesTPequenos(int n, unsigned int (*dispersion)(char 
     return (tb - ta) / K;                 
 }
 
-void medirTiempo(int tipoDispersion, int tipoResolucion,
-                 unsigned int (*dispersion)(char *, int),
-                 unsigned int (*resol_colisiones)(int, int)) {
-    double t, x = 0, y = 0, z = 0;
-    int i, ok;
-    char claves[16000][LONGITUD_CLAVE];
-    tabla_cerrada diccionario;
-    
-    inicializar_cerrada(&diccionario, TAM_TABLA);
-    
-    // Generar claves aleatorias
-    for (i = 0; i < 16000; i++) {
+void inicializar_y_llenar_diccionario(tabla_cerrada *diccionario, 
+                                      char claves[][LONGITUD_CLAVE],
+                                      unsigned int (*dispersion)(char *, int),
+                                      unsigned int (*resol_colisiones)
+                                      (int, int)) {
+    inicializar_cerrada(diccionario, TAM_TABLA);
+    for (int i = 0; i < 16000; i++) {
         sprintf(claves[i], "clave%d", rand());
-        insertar_cerrada(claves[i], "", diccionario, TAM_TABLA, dispersion, resol_colisiones);
+        insertar_cerrada(claves[i], "", *diccionario,
+            TAM_TABLA, dispersion, resol_colisiones);
     }
-    
-    printf("    n    \t    t(n)    \t    t(n)/f(n)    \t    t(n)/g(n)    \t    t(n)/h(n)    \n");
-    
-    for(i = 125; i <= 16000; i = i * 2) {
-        t = medirTiempoBuscarNClaves(i, dispersion, resol_colisiones, claves, diccionario);
+}
+
+void medir_y_imprimir_tiempos(int tipoDispersion, int tipoResolucion,
+                              unsigned int (*dispersion)(char *, int),
+                              unsigned int (*resol_colisiones)(int, int),
+                              char claves[][LONGITUD_CLAVE],
+                              tabla_cerrada diccionario) {
+    double t, x, y, z;
+    int ok;
+    for(int i = 125; i <= 16000; i *= 2) {
+        t = medirTiempoBuscarNClaves(i, dispersion,
+            resol_colisiones, claves, diccionario);
         ok = 0;
         if(t < 500) {        
-            t = medirTiempoBuscarNClavesTPequenos(i, dispersion, resol_colisiones, claves, diccionario);
+            t = medirTiempoBuscarNClavesTPequenos(i, dispersion,
+                resol_colisiones, claves, diccionario);
             ok = 1;
         }
         escogerCota(tipoDispersion, tipoResolucion, t, &x, &y, &z, i);
         if(ok == 0) {
-            printf("%8d\t%12.4f\t%18.10f\t%18.10f\t%18.10f\n", i, t, x, y, z);   
+            printf("%8d %15.4f %24.10f %24.10f %24.10f\n", i, t, x, y, z);
         } else {
-            printf("%8d\t%12.4f*\t%18.10f\t%18.10f\t%18.10f\n", i, t, x, y, z);
+            printf("%8d %15.4f* %23.10f %24.10f %24.10f\n", i, t, x, y, z);
         }
     }
+}
+
+void imprimir_encabezado(const char *dispersion_str,
+    const char *resolucion_str){
+
+    printf("\nMedición de tiempos para dispersión %s y resolución %s:\n", 
+           dispersion_str, resolucion_str);
+    printf("%8s %15s %24s %24s %24s\n", "n", "t(n)",
+        "t(n)/f(n)", "t(n)/g(n)", "t(n)/h(n)");
+}
+
+void imprimir_cotas(int tipoDispersion, int tipoResolucion) {
+    printf("Donde:\n");
+    switch(tipoDispersion * 10 + tipoResolucion) {
+        case 11:
+            printf("f(n) = n^0.9, g(n) = n, h(n) = n * log(n)\n");
+        break;
+        case 12:
+            printf("f(n) = n^0.8, g(n) = sqrt(n), h(n) = log(n)\n");
+        break;
+        case 13:
+            printf("f(n) = log(n), g(n) = sqrt(n), h(n) = n^0.8\n");
+        break;
+        case 21:
+            printf("f(n) = n^0.85, g(n) = n, h(n) = n * log(n)\n");
+        break;
+        case 22:
+            printf("f(n) = n^0.75, g(n) = sqrt(n), h(n) = log(n)\n");
+        break;
+        case 23:
+            printf("f(n) = log(n), g(n) = n^0.7, h(n) = sqrt(n)\n");
+        break;
+        default:
+            printf("f(n) = n^0.8, g(n) = n, h(n) = n * log(n)\n");
+    }
+}
+
+const char* obtener_nombre_resolucion(int tipoResolucion) {
+    switch(tipoResolucion) {
+        case 1: return "lineal";
+        case 2: return "cuadrática";
+        case 3: return "doble";
+        default: return "desconocida";
+    }
+}
+
+void medirTiempo(int tipoDispersion, int tipoResolucion,
+                 unsigned int (*dispersion)(char *, int),
+                 unsigned int (*resol_colisiones)(int, int)) {
+    char claves[16000][LONGITUD_CLAVE];
+    tabla_cerrada diccionario;
+    const char *dispersion_str = (tipoDispersion == 1) ? "A" : "B";
+    const char *resolucion_str = obtener_nombre_resolucion(tipoResolucion);
+    
+    inicializar_y_llenar_diccionario(&diccionario,
+        claves, dispersion, resol_colisiones);
+    
+    imprimir_encabezado(dispersion_str, resolucion_str);
+    
+    medir_y_imprimir_tiempos(tipoDispersion, tipoResolucion, dispersion, 
+                             resol_colisiones, claves, diccionario);
+    
+    imprimir_cotas(tipoDispersion, tipoResolucion);
     
     free(diccionario);
 }
 
 int main() {
+    srand(time(NULL));  // Initialize random seed
     tests();
-       printf("\nMedición de tiempos para dispersión A y resolución lineal:\n");
-    medirTiempo(1, 1, dispersionA, resolucion_lineal);
     
-    printf("\nMedición de tiempos para dispersión A y resolución cuadrática:\n");
-    medirTiempo(1, 2, dispersionA, resolucion_cuadratica);
+    int dispersiones[] = {1, 2}; // 1 para A, 2 para B
+    int resoluciones[] = {1, 2, 3}; // 1 para lineal, 2 para cuadrática, 3 para doble
     
-    printf("\nMedición de tiempos para dispersión A y resolución doble:\n");
-    medirTiempo(1, 3, dispersionA, resolucion_doble);
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
+            unsigned int (*dispersion)(char *, int) =
+                (dispersiones[i] == 1) ? dispersionA : dispersionB;
+            unsigned int (*resolucion)(int, int);
+            
+            switch(resoluciones[j]) {
+                case 1: resolucion = resolucion_lineal; break;
+                case 2: resolucion = resolucion_cuadratica; break;
+                case 3: resolucion = resolucion_doble; break;
+            }
+            
+            medirTiempo(dispersiones[i], resoluciones[j],
+                dispersion, resolucion);
+        }
+    }
     
-    printf("\nMedición de tiempos para dispersión B y resolución lineal:\n");
-    medirTiempo(2, 1, dispersionB, resolucion_lineal);
-    
-    printf("\nMedición de tiempos para dispersión B y resolución cuadrática:\n");
-    medirTiempo(2, 2, dispersionB, resolucion_cuadratica);
-    
-    printf("\nMedición de tiempos para dispersión B y resolución doble:\n");
-    medirTiempo(2, 3, dispersionB, resolucion_doble);
     return 0;
 }
