@@ -220,44 +220,60 @@ double microsegundos() {
 }
 
 void escogerCota(int tipoVector, double t, double* x, 
-                double* y, double* z, int i){
+                double* y, double* z, int n){
     if(tipoVector == 1){ //ascendente
-        *x=t/(pow(i,0.72) * log(pow(i,0.72)));
-        *y=t/(pow(i,0.87) * log(pow(i,0.87)));
-        *z=t/(pow(i,1.02) * log(pow(i,1.02)));
+        *x=t/n;
+        *y=t/n;
+        *z=t/n;
     }else if(tipoVector == 2){ //descendente
-        *x=t/(pow(i,0.84) * log(pow(i,0.84)));
-        *y=t/(pow(i, 0.89) * log(pow(i,0.89)));
-        *z=t/(pow(i,0.94) * log(pow(i,0.94)));
+        *x=t/n;
+        *y=t/n;
+        *z=t/n;
     }else{ //aleatorio
-        *x=t/(pow(i,0.81) * log(pow(i,0.81)));
-        *y=t/(pow(i,0.91) * log(pow(i,0.91)));
-        *z=t/(pow(i,1.01) * log(pow(i,1.01)));
+        *x=t/n;
+        *y=t/n;
+        *z=t/n;
     }
 }
 
-void imprimirCabecera(int tipoVector) {
+void imprimirCabeceras(int tipoVector) {
     const char* tipoVectorStr;
+    const char* cotaSub;
+    const char* cotaAjustada;
+    const char* cotaSobre;
+
     switch(tipoVector) {
         case 1:
             tipoVectorStr = "ascendente";
+            cotaSub = "n^0.72 * log(n)";
+            cotaAjustada = "n^0.87 * log(n)";
+            cotaSobre = "n^1.02 * log(n)";
             break;
         case 2:
             tipoVectorStr = "descendente";
+            cotaSub = "n^0.84 * log(n)";
+            cotaAjustada = "n^0.89 * log(n)";
+            cotaSobre = "n^0.94 * log(n)";
             break;
         case 3:
             tipoVectorStr = "aleatorio";
+            cotaSub = "n^0.81 * log(n)";
+            cotaAjustada = "n^0.91 * log(n)";
+            cotaSobre = "n^1.01 * log(n)";
             break;
         default:
             tipoVectorStr = "desconocido";
+            cotaSub = "n^0.8 * log(n)";
+            cotaAjustada = "n^0.9 * log(n)";
+            cotaSobre = "n^1.0 * log(n)";
     }
 
     printf("\nMedición de tiempos para vector %s:\n", tipoVectorStr);
-    printf("Cota subestimada: n^0.8 * log(n)\n");
-    printf("Cota ajustada: n^0.9 * log(n)\n");
-    printf("Cota sobrestimada: n^1.0 * log(n)\n");
+    printf("Cota subestimada: %s\n", cotaSub);
+    printf("Cota ajustada: %s\n", cotaAjustada);
+    printf("Cota sobrestimada: %s\n", cotaSobre);
     printf("\n");
-    printf("   n\t\t   t(n)\t\t   t(n)/n^0.8*log(n)   t(n)/n^0.9*log(n)   t(n)/n^1.0*log(n)\n");
+    printf("   n\t\t   t(n)\t\t   t(n)/%s   t(n)/%s   t(n)/%s\n", cotaSub, cotaAjustada, cotaSobre);
 }
 
 
@@ -299,6 +315,7 @@ void medirTiempo(int tipoVector){
 
 int main(){
     inicializar_semilla();
+    
     printf("Test de ordenación por montículos:\n");
     testOrdenarPorMonticulos();
 
