@@ -15,6 +15,7 @@ GRUPO:2.3	FECHA:7/12/24
 #include <stdbool.h>
 
 #define TAM 256000
+#define K  1000
 
 ////////MONTICULO Y SUS FUNCIONES////////
 struct monticulo {
@@ -149,6 +150,24 @@ void imprimir_vector(int v[], int n) {
     printf("]\n");
 }
 
+void elegirTipoDeVector(int v[], int n, int tipo) {
+    switch (tipo) {
+        case 1: // Ascendente
+            vector_ascendente(v, n);
+            break;
+        case 2: // Descendente
+            vector_descendente(v, n);
+            break;
+        case 3: // Aleatorio
+            vector_aleatorio(v, n);
+            break;
+        default:
+            printf("Tipo de vector no válido. Se generará un vector ascendente por defecto.\n");
+            vector_ascendente(v, n); // Por defecto, ascendente
+            break;
+    }
+}
+
 ////////TESTS////////
 
 bool monticuloVacio(pmonticulo m){
@@ -200,9 +219,90 @@ double microsegundos() {
     return (t.tv_usec + t.tv_sec * 1000000.0);
 }
 
+void escogerCota(int tipoVector, double t, double* x, 
+                double* y, double* z, int i){
+    if(tipoVector == 1){ //ascendente
+        *x=t/(pow(i,0.72) * log(pow(i,0.72)));
+        *y=t/(pow(i,0.87) * log(pow(i,0.87)));
+        *z=t/(pow(i,1.02) * log(pow(i,1.02)));
+    }else if(tipoVector == 2){ //descendente
+        *x=t/(pow(i,0.84) * log(pow(i,0.84)));
+        *y=t/(pow(i, 0.89) * log(pow(i,0.89)));
+        *z=t/(pow(i,0.94) * log(pow(i,0.94)));
+    }else{ //aleatorio
+        *x=t/(pow(i,0.81) * log(pow(i,0.81)));
+        *y=t/(pow(i,0.91) * log(pow(i,0.91)));
+        *z=t/(pow(i,1.01) * log(pow(i,1.01)));
+    }
+}
+
+void imprimirCabecera(int tipoVector) {
+    const char* tipoVectorStr;
+    switch(tipoVector) {
+        case 1:
+            tipoVectorStr = "ascendente";
+            break;
+        case 2:
+            tipoVectorStr = "descendente";
+            break;
+        case 3:
+            tipoVectorStr = "aleatorio";
+            break;
+        default:
+            tipoVectorStr = "desconocido";
+    }
+
+    printf("\nMedición de tiempos para vector %s:\n", tipoVectorStr);
+    printf("Cota subestimada: n^0.8 * log(n)\n");
+    printf("Cota ajustada: n^0.9 * log(n)\n");
+    printf("Cota sobrestimada: n^1.0 * log(n)\n");
+    printf("\n");
+    printf("   n\t\t   t(n)\t\t   t(n)/n^0.8*log(n)   t(n)/n^0.9*log(n)   t(n)/n^1.0*log(n)\n");
+}
+
+
+void medirTiempo(int tipoVector){
+    double ta, tb, t, x, y, z; int n, i, ok; int v[n];
+    imprimirCabeceras(tipoVector);
+    for(n= 500; n <= 32000; n = n * 2){
+        elegirTipoDeVector(v,n,tipoVector);
+        pmonticulo m = malloc(sizeof(struct monticulo));
+        crearMonticulo(m,v,n);
+        ta = microsegundos();
+        ordenarPorMonticulos(m,n);
+        tb = microsegundos();
+        t = tb - ta;
+        ok=0;
+        if(t < 500){
+            elegirTipoDeVector(v,n,tipoVector);
+            pmonticulo m = malloc(sizeof(struct monticulo));
+            crearMonticulo(m,v,n);
+            ta = microsegundos();            
+            for( i = 1; i <= K; i++ ){
+                ordenarPorMonticulos(m,n);
+            }
+            tb = microsegundos();            
+            t = (tb - ta)/K;
+            ok=1;
+        }
+        escogerCota(v,t,&x,&y,&z,n);
+        if(ok == 0){
+            printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",n,t,x,y,z);    
+        }else{
+            printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",n,t,"*",x, y,z);
+        }
+        free(m);
+    }    
+}
+
 ////////MAIN////////
 
 int main(){
     inicializar_semilla();
+    printf("Test de ordenación por montículos:\n");
     testOrdenarPorMonticulos();
+
+    medirTiempo(1); // Vector ascendente
+    medirTiempo(2); // Vector descendente
+    medirTiempo(3); // Vector aleatorio
 }
