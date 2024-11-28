@@ -273,41 +273,40 @@ void imprimirCabeceras(int tipoVector) {
     printf("Cota ajustada: %s\n", cotaAjustada);
     printf("Cota sobrestimada: %s\n", cotaSobre);
     printf("\n");
-    printf("   n\t\t   t(n)\t\t   t(n)/%s   t(n)/%s   t(n)/%s\n", cotaSub, cotaAjustada, cotaSobre);
+    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", cotaSub, 
+                                    cotaAjustada, cotaSobre);
 }
 
 
 void medirTiempo(int tipoVector){
-    double ta, tb, t, x, y, z; int n, i, ok; int v[n];
+    double ta, tb, t, x, y, z; int n, i, ok; int *v;
+
     imprimirCabeceras(tipoVector);
     for(n= 500; n <= 32000; n = n * 2){
+        v = malloc(n * sizeof(int));
         elegirTipoDeVector(v,n,tipoVector);
-        pmonticulo m = malloc(sizeof(struct monticulo));
-        crearMonticulo(m,v,n);
         ta = microsegundos();
-        ordenarPorMonticulos(m,n);
+        ordenarPorMonticulos(v,n);
         tb = microsegundos();
         t = tb - ta;
         ok=0;
         if(t < 500){
             elegirTipoDeVector(v,n,tipoVector);
-            pmonticulo m = malloc(sizeof(struct monticulo));
-            crearMonticulo(m,v,n);
             ta = microsegundos();            
             for( i = 1; i <= K; i++ ){
-                ordenarPorMonticulos(m,n);
+                ordenarPorMonticulos(v,n);
             }
             tb = microsegundos();            
             t = (tb - ta)/K;
             ok=1;
         }
-        escogerCota(v,t,&x,&y,&z,n);
+        escogerCota(tipoVector,t,&x,&y,&z,n);
         if(ok == 0){
             printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",n,t,x,y,z);    
         }else{
             printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",n,t,"*",x, y,z);
         }
-        free(m);
+        free(v);
     }    
 }
 
