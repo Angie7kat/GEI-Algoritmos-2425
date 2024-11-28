@@ -98,10 +98,21 @@ void crearMonticulo(pmonticulo m, int v[], int n) {
     }
 }
 
+void imprimirMonticulo(pmonticulo m) {
+    printf("  [");
+    for (int i = 0; i <= m->ultimo; i++) {
+        printf("%d", m->vector[i]);
+        if (i < m->ultimo) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
 ////////ALGORITMO DE ORDENACION////////
 void ordenarPorMonticulos(int v[], int n) {
     int i;
-    pmonticulo m = malloc(sizeof(struct monticulo));
+    pmonticulo m = (pmonticulo)malloc(sizeof(struct monticulo));
     
     crearMonticulo(m, v, n);
     
@@ -174,6 +185,22 @@ bool monticuloVacio(pmonticulo m){
     return m->ultimo == -1;
 }
 
+bool compararMonticuloConVector(pmonticulo m, int v[], int n) {
+    if (m->ultimo + 1 != n) {
+        printf("El montículo y el vector inicial NO son iguales. Tienen diferentes tamaños.\n");
+        return false;
+    }
+    for (int i = 0; i < n; i++) {
+        if (m->vector[i] != v[i]) {
+            //Difieren en una posición
+            printf("El montículo y el vector inicial NO son iguales.\n");
+            return false;
+        }
+    }
+    printf("El montículo y el vector inicial SON iguales.\n");
+    return true;
+}
+
 bool ordenado(int v[], int n) {
     for (int i = 0; i < (n - 1); ++i){
         if (v[i] > v[i + 1]){
@@ -181,6 +208,65 @@ bool ordenado(int v[], int n) {
         }
     }
     return true;
+}
+
+void buscarNumero(int arr[], int tam, int num, pmonticulo m) {
+    for (int i = 0; i < tam; i++) {
+        if (arr[i] == num) {
+            printf("Error: Se ha encontrado el menor que debió ser eliminado.\n");
+            imprimirMonticulo(m);
+            return;
+        }
+    }
+    printf("El menor ha sido eliminado correctamente.\n");
+}
+
+void probarCrear() {
+    int v[17], n = 17;
+    pmonticulo m = (pmonticulo) malloc(sizeof(struct monticulo));
+    printf("TEST CREAR MONTÍCULO:\n");
+    printf("Inicializacion aleatoria:\n");
+    vector_aleatorio(v,n);
+    imprimir_vector(v, n);
+    crearMonticulo(m, v, n);
+    printf("Vector del monticulo:\n");
+    imprimirMonticulo(m);
+    compararMonticuloConVector(m,v,n);
+    free(m);
+}
+
+void probarInsertar(){
+    int v[17];
+    int i, n = 17, x;
+    pmonticulo m = (pmonticulo) malloc(sizeof(struct monticulo));
+
+    printf("TEST INSERTAR MONTÍCULO:\n");
+    iniMonticulo(m);
+    printf("Inicializacion aleatoria:\n");
+    vector_aleatorio(v,n);
+    imprimir_vector(v, n);
+    for(i = 0; i < n; i ++){
+        x = v[i];
+        insertarMonticulo(m,x);
+    }
+    printf("Vector del monticulo:\n");
+    imprimirMonticulo(m);
+    compararMonticuloConVector(m,v,n);
+    free(m);
+}
+
+void probarBorrar(){
+    int v[17], n = 17, x;
+    pmonticulo m = (pmonticulo) malloc(sizeof(struct monticulo));
+    printf("TEST QUITAR MENOR MONTÍCULO:\n");
+    vector_aleatorio(v,n);
+    crearMonticulo(m, v, n);
+    printf("Vector del monticulo:\n");
+    imprimirMonticulo(m);
+    printf("El menor del monticulo es : %d\n",consultarMenor(m));
+    x = consultarMenor(m);
+    quitarMenor(m);
+    buscarNumero(v,n,x,m);
 }
 
 void probarVector(int v[], int n, const char* tipo) {
@@ -203,6 +289,8 @@ void testOrdenarPorMonticulos() {
     vector_ascendente(ascendente, n);
     vector_descendente(descendente, n);
     vector_aleatorio(aleatorio, n);
+
+    printf("TEST DE ORDENACIÓN POR MONTÍCULOS:\n");
 
     // Probar cada vector
     probarVector(ascendente, n, "ascendente");
@@ -314,9 +402,15 @@ void medirTiempo(int tipoVector){
 
 int main(){
     inicializar_semilla();
-    
-    printf("Test de ordenación por montículos:\n");
-    testOrdenarPorMonticulos();
+
+    probarCrear();
+    printf("\n");
+    probarInsertar();
+    printf("\n");
+    probarBorrar();
+    printf("\n");
+    testOrdenarPorMonticulos();// NO PUEDO USAR PROBAR VECTOR, O SÍ?
+    printf("\n");
 
     medirTiempo(1); // Vector ascendente
     medirTiempo(2); // Vector descendente
