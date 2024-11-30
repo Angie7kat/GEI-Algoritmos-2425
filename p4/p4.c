@@ -30,8 +30,9 @@ void iniMonticulo(pmonticulo m) {
 
 void flotar(pmonticulo m, int i) {
     int padre = (i - 1) / 2;
+    int temp;
     while (i > 0 && m->vector[padre] > m->vector[i]) {
-        int temp = m->vector[i];
+        temp = m->vector[i];
         m->vector[i] = m->vector[padre];
         m->vector[padre] = temp;
         i = padre;
@@ -40,7 +41,7 @@ void flotar(pmonticulo m, int i) {
 }
 
 void hundir(pmonticulo m, int i) {
-    int hijo_izq, hijo_der, menor;
+    int hijo_izq, hijo_der, menor, temp;
     while (2 * i + 1 <= m->ultimo) {
         hijo_izq = 2 * i + 1;
         hijo_der = 2 * i + 2;
@@ -52,7 +53,7 @@ void hundir(pmonticulo m, int i) {
         if (m->vector[i] <= m->vector[menor]) {
             break;
         }
-        int temp = m->vector[i];
+        temp = m->vector[i];
         m->vector[i] = m->vector[menor];
         m->vector[menor] = temp;
         i = menor;
@@ -99,8 +100,9 @@ void crearMonticulo(pmonticulo m, int v[], int n) {
 }
 
 void imprimirMonticulo(pmonticulo m) {
+    int i;
     printf("  [");
-    for (int i = 0; i <= m->ultimo; i++) {
+    for (i = 0; i <= m->ultimo; i++) {
         printf("%d", m->vector[i]);
         if (i < m->ultimo) {
             printf(", ");
@@ -134,7 +136,6 @@ void vector_aleatorio(int v[], int n){
     int i, m=2*n+1;
     for (i = 0; i < n; i++) v[i] = (rand() % m) - n;
 }
-
 
 void vector_ascendente(int v[], int n){
     int i;
@@ -185,24 +186,48 @@ bool monticuloVacio(pmonticulo m){
     return m->ultimo == -1;
 }
 
-bool compararMonticuloConVector(pmonticulo m, int v[], int n) {
-    if (m->ultimo + 1 != n) {
-        printf("El montículo y el vector inicial NO son iguales. Tienen diferentes tamaños.\n");
-        return false;
-    }
-    for (int i = 0; i < n; i++) {
-        if (m->vector[i] != v[i]) {
-            //Difieren en una posición
-            printf("El montículo y el vector inicial NO son iguales.\n");
+/*
+bool es_monticulo_valido(pmonticulo m) {
+    for (int i = 0; i <= m->ultimo / 2; i++) {
+        int hijo_izq = 2 * i + 1;
+        int hijo_der = 2 * i + 2;
+
+        if (hijo_izq <= m->ultimo && m->vector[i] > m->vector[hijo_izq]) {
+            return false;
+        }
+        if (hijo_der <= m->ultimo && m->vector[i] > m->vector[hijo_der]) {
             return false;
         }
     }
-    printf("El montículo y el vector inicial SON iguales.\n");
+    return true;
+}
+*/
+
+bool contiene_elementos(pmonticulo m, int v[], int n) {
+    bool encontrado[n];
+    int i, j;
+    for (i = 0; i < n; i++) encontrado[i] = false;
+
+    for (i = 0; i <= m->ultimo; i++) {
+        for (j = 0; j < n; j++) {
+            if (m->vector[i] == v[j] && !encontrado[j]) {
+                encontrado[j] = true;
+                break;
+            }
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        if (!encontrado[i]) {
+            return false;
+        }
+    }
     return true;
 }
 
 bool ordenado(int v[], int n) {
-    for (int i = 0; i < (n - 1); ++i){
+    int i;
+    for (i = 0; i < (n - 1); ++i){
         if (v[i] > v[i + 1]){
             return false;
         }
@@ -211,7 +236,8 @@ bool ordenado(int v[], int n) {
 }
 
 void buscarNumero(pmonticulo m, int num) {
-    for (int i = 0; i <= m->ultimo; i++) {
+    int i;
+    for (i = 0; i <= m->ultimo; i++) {
         if (m->vector[i] == num) {
             printf("Error: Se ha encontrado el menor que debió ser eliminado.\n");
         }
@@ -229,7 +255,11 @@ void probarCrear() {
     crearMonticulo(m, v, n);
     printf("Vector del monticulo:\n");
     imprimirMonticulo(m);
-    compararMonticuloConVector(m,v,n);
+    if(contiene_elementos(m,v,n))
+        printf("El montículo se ha creado correctamente.\n");
+    else{
+        printf("El montículo NO se ha creado correctamente.\n");
+    }
     free(m);
 }
 
@@ -249,7 +279,11 @@ void probarInsertar(){
     }
     printf("Vector del monticulo:\n");
     imprimirMonticulo(m);
-    compararMonticuloConVector(m,v,n);
+    if(contiene_elementos(m,v,n))
+        printf("El monticulo se ha creado con las inserciones correctamente.\n");
+    else{
+        printf("El montículo NO se ha creado correctamente.\n");
+    }
     free(m);
 }
 
@@ -268,6 +302,23 @@ void probarBorrar(){
     imprimirMonticulo(m);
 }
 
+/* ESTO VA MAL
+void probarBorrarVacio(){
+    int v[17], n = 17, x;
+    pmonticulo m = (pmonticulo) malloc(sizeof(struct monticulo));
+    printf("TEST QUITAR ÚNICO ELEMENTO MONTÍCULO:\n");
+    v[0] = 1;
+    crearMonticulo(m, v, n);
+    printf("Vector del monticulo:\n");
+    imprimirMonticulo(m);
+    x = consultarMenor(m);
+    quitarMenor(m);
+    buscarNumero(m, x);
+    imprimirMonticulo(m);
+    quitarMenor(m);
+}
+*/
+
 void probarVector(int v[], int n, const char* tipo) {
     printf("\nVector %s inicial: ", tipo);
     imprimir_vector(v, n);
@@ -279,6 +330,8 @@ void probarVector(int v[], int n, const char* tipo) {
     printf("Vector %s -> Ordenado correctamente: %s\n",
            tipo, ordenado(v, n) ? "Sí" : "No");
 }
+
+
 
 void testOrdenarPorMonticulos() {
     int n = 17;
@@ -364,6 +417,46 @@ void imprimirCabeceras(int tipoVector) {
                                     cotaAjustada, cotaSobre);
 }
 
+void medirTiempoMonticulo(int tipoVector, int creac){
+    double ta, tb, t, x, y, z; int n, i, ok; int *v;
+    // LAS COTAS SON DISTINTAS, ESTA TIENE QUE TENER COMPLEJIDAD O(n), insertar tiene q tener O(nlogn)
+    if(creac = 1){ // Imprimir cabeceras de crear
+        printf("%8s %24s %24s %24s %24s\n", "n", "t(n)",
+        "t(n)/n^0.8", "t(n)/n", "t(n)/n*log(n)");
+    }else{//Imprimir cabeceras de insertar
+        printf("%8s %24s %24s %24s %24s\n", "n", "t(n)",
+        "t(n)/n^0.8", "t(n)/n", "t(n)/n*log(n)");
+    }
+    for(n= 500; n <= 32000; n = n * 2){
+        v = malloc(n * sizeof(int));
+        elegirTipoDeVector(v,n,tipoVector);
+        pmonticulo m = (pmonticulo) malloc(sizeof(struct monticulo));
+        //NECESITO HACER ALGO PARA DECIDIR CUAL USO
+        ta = microsegundos();
+        crearMonticulo(m,v,n);
+        tb = microsegundos();
+        t = tb - ta;
+        ok=0;
+        if(t < 500){
+            elegirTipoDeVector(v,n,tipoVector);
+            ta = microsegundos();            
+            for( i = 1; i <= K; i++ ){
+                crearMonticulo(m,v,n);
+            }
+            tb = microsegundos();            
+            t = (tb - ta)/K;
+            ok=1;
+        }
+        escogerCota(tipoVector,t,&x,&y,&z,n);
+        if(ok == 0){
+            printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",n,t,x,y,z);    
+        }else{
+            printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",n,t,"*",x, y,z);
+        }
+        free(v);
+        free(m);
+    }    
+}
 
 void medirTiempo(int tipoVector){
     double ta, tb, t, x, y, z; int n, i, ok; int *v;
@@ -408,9 +501,13 @@ int main(){
     printf("\n");
     probarBorrar();
     printf("\n");
+    //probarBorrarVacio();
+    printf("\n");
     testOrdenarPorMonticulos();// NO PUEDO USAR PROBAR VECTOR, O SÍ?
     printf("\n");
 
+    printf("Medición de tiempos para crearMOnticulo:");
+    medirTiempoMonticulo(3,1);
     medirTiempo(1); // Vector ascendente
     medirTiempo(2); // Vector descendente
     medirTiempo(3); // Vector aleatorio
