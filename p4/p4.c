@@ -210,12 +210,10 @@ bool ordenado(int v[], int n) {
     return true;
 }
 
-void buscarNumero(int arr[], int tam, int num, pmonticulo m) {
-    for (int i = 0; i < tam; i++) {
-        if (arr[i] == num) {
+void buscarNumero(pmonticulo m, int num) {
+    for (int i = 0; i <= m->ultimo; i++) {
+        if (m->vector[i] == num) {
             printf("Error: Se ha encontrado el menor que debió ser eliminado.\n");
-            imprimirMonticulo(m);
-            return;
         }
     }
     printf("El menor ha sido eliminado correctamente.\n");
@@ -266,7 +264,8 @@ void probarBorrar(){
     printf("El menor del monticulo es : %d\n",consultarMenor(m));
     x = consultarMenor(m);
     quitarMenor(m);
-    buscarNumero(v,n,x,m);
+    buscarNumero(m, x);
+    imprimirMonticulo(m);
 }
 
 void probarVector(int v[], int n, const char* tipo) {
