@@ -420,11 +420,11 @@ void imprimirCabeceras(int tipoVector) {
 void medirTiempoMonticulo(int tipoVector, int creac){
     double ta, tb, t, x, y, z; int n, i, ok; int *v;
     // LAS COTAS SON DISTINTAS, ESTA TIENE QUE TENER COMPLEJIDAD O(n), insertar tiene q tener O(nlogn)
-    if(creac = 1){ // Imprimir cabeceras de crear
-        printf("%8s %24s %24s %24s %24s\n", "n", "t(n)",
+    if(creac == 1){ // Imprimir cabeceras de crear
+        printf("%8s\t%24s\t%24s\t%24s\t%24s\n", "n", "t(n)",
         "t(n)/n^0.8", "t(n)/n", "t(n)/n*log(n)");
     }else{//Imprimir cabeceras de insertar
-        printf("%8s %24s %24s %24s %24s\n", "n", "t(n)",
+        printf("%8s\t%24s\t%24s\t%24s\t%24s\n", "n", "t(n)",
         "t(n)/n^0.8", "t(n)/n", "t(n)/n*log(n)");
     }
     for(n= 500; n <= 32000; n = n * 2){
@@ -506,7 +506,7 @@ int main(){
     testOrdenarPorMonticulos();// NO PUEDO USAR PROBAR VECTOR, O SÍ?
     printf("\n");
 
-    printf("Medición de tiempos para crearMOnticulo:");
+    printf("Medición de tiempos para crearMOnticulo:\n");
     medirTiempoMonticulo(3,1);
     medirTiempo(1); // Vector ascendente
     medirTiempo(2); // Vector descendente
