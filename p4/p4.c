@@ -438,13 +438,13 @@ void imprimirCabeceras(int tipoVector) {
 }
 
 void medirTiempoMonticulo(int tipoVector, int creac){
-    double ta, tb, t, x, y, z; int n, i, ok; int *v;
+    double ta, tb, t, x; int n, i, ok; int *v;
     if(creac == 1){ // Imprimir cabeceras de crear
-        printf("%8s\t%24s\t%24s\t%24s\t%24s\n", "n", "t(n)",
-        "t(n)/n^0.8", "t(n)/n", "t(n)/n*log(n)");
+        printf("%8s\t%24s\t%24s\n", "n", "t(n)",
+        "t(n)/n");
     }else{//Imprimir cabeceras de insertar
-        printf("%8s\t%24s\t%24s\t%24s\t%24s\n", "n", "t(n)",
-        "t(n)/n*log(n)", "t(n)/n*log(n)^0.9", "t(n)/n*log(n)^1.1");
+        printf("%8s\t%24s\t%24s\n", "n", "t(n)",
+        "t(n)/n*log(n)");
     }
     for(n= 500; n <= 32000; n = n * 2){
         v = malloc(n * sizeof(int));
@@ -470,9 +470,9 @@ void medirTiempoMonticulo(int tipoVector, int creac){
             }
             tb = microsegundos(); t = (tb - ta)/K; ok=1;
         }
-        escogerCota(tipoVector,t,&x,&y,&z,n);
-        if(ok == 0){ printf("%8d\t%24.7f\t%24.7f\t%24.7f\t%24.7f\n",n,t,x,y,z);
-        }else{ printf("%8d\t%24.7f%s\t%24.7f\t%24.7f\t%24.7f\n",n,t,"*",x, y,z);
+        x = pow(n,1) * log(pow(n,1));
+        if(ok == 0){ printf("%8d\t%24.7f\t%24.7f\n",n,t,t/x);
+        }else{ printf("%8d\t%24.7f%s\t%24.7f\n",n,t,"*",t/n);
         }
         free(v); free(m);
     }
@@ -525,11 +525,13 @@ int main(){
     printf("\n");
     probarBorrarVacio();
     printf("\n");
-    testOrdenarPorMonticulos();// NO PUEDO USAR PROBAR VECTOR, O SÍ?
+    testOrdenarPorMonticulos();
     printf("\n");
 
     printf("Medición de tiempos para crearMonticulo:\n");
-    medirTiempoMonticulo(3,1);
+    medirTiempoMonticulo(3,1); // crear monticulo
+    printf("Medición de tiempos para insertarMonticulo:\n");
+    medirTiempoMonticulo(3,0); // insertar monticulo
     medirTiempo(1); // Vector ascendente
     medirTiempo(2); // Vector descendente
     medirTiempo(3); // Vector aleatorio
