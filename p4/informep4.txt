@@ -7,25 +7,18 @@ GRUPO:2.3	FECHA:7/12/24
 .-INTRODUCCION
 
     En esta práctica, exploraremos el uso y las propiedades de los montículos de 
-  mínimos, una estructura de datos fundamental para resolver eficientemente 
-  problemas que involucran operaciones frecuentes de obtención y eliminación del 
-  menor elemento. La práctica está estructurada en cuatro partes principales, 
-  que abarcan desde la implementación de operaciones básicas sobre montículos 
-  hasta la validación empírica de sus complejidades algorítmicas.
+  mínimos, una estructura de datos fundamental para resolver eficientemente problemas 
+  que involucran operaciones frecuentes de obtención y eliminación del menor elemento.
 
-    Primero, implementaremos las operaciones básicas de un montículo de mínimos, 
-  utilizando una representación basada en arrays para almacenar y manipular los 
-  elementos. A continuación, validaremos que dichas operaciones cumplen con las 
-  expectativas de tiempo de ejecución teóricas. Posteriormente, aplicaremos estas 
-  operaciones para implementar el algoritmo de ordenación por montículos, 
-  demostrando su efectividad y comparándolo con otros algoritmos de ordenación 
-  estudiados en prácticas previas.
+    Primero, implementaremos las operaciones básicas de un montículo de mínimos y 
+  verificaremos su correcto funcionamiento. A continuación, validaremos que crearMonticulo 
+  y insertarMonticulo cumplen con las expectativas de tiempo de ejecución teóricas.
 
-    Finalmente, realizaremos un análisis empírico del comportamiento de estas 
-  operaciones y algoritmos, evaluando su rendimiento en diferentes casos 
-  iniciales: vectores ordenados, inversamente ordenados y desordenados. Este 
-  análisis nos permitirá confirmar las complejidades teóricas asociadas a cada 
-  operación y resaltar las ventajas del uso de montículos en problemas reales.
+    Finalmente, realizaremos un análisis empírico del comportamiento del algoritmo 
+  de ordenación por montículos, evaluando su rendimiento en diferentes casos iniciales: 
+  vectores ordenados, inversamente ordenados y desordenados. Este análisis nos permitirá 
+  confirmar las complejidades teóricas asociadas a cada operación y resaltar las ventajas
+  del uso de montículos en problemas reales.
 
 .-UNIDADES:
 
@@ -122,7 +115,7 @@ Cota subestimada: n^0.9 * log(n^0.9)
 Cota ajustada: n^1.03 * log(n^1.03)
 Cota sobrestimada: n^1.16 * log(n^1.16)
 Constante: 0.038
-Anomalías #
+Presencia de Anomalías: #
        n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
 
      500	             115.9560000*	               0.0771905	               0.0300679#	               0.0119019
@@ -171,9 +164,9 @@ Anomalías #
         - Vector descendente: O(n^2)
         - Vector aleatorio: O(n^2)
     Ordenación rápida (Quicksort):
-        - Vector ascendente: O(n^0.87 log n)
-        - Vector descendente: O(n^0.89 log n)
-        - Vector aleatorio: O(n^0.91 log n)
+        - Vector ascendente: O(n^0.87 log n^0.87)
+        - Vector descendente: O(n^0.89 log n^0.89)
+        - Vector aleatorio: O(n^0.91 log n^0.91)
     Comparación:
         La ordenación por montículos muestra un rendimiento más consistente en todos 
       los casos, sin importar el orden inicial del vector. Esto es una ventaja 
