@@ -382,17 +382,17 @@ double microsegundos() {
 void escogerCota(int tipoVector, double t, double* x, 
                 double* y, double* z, int n){
     if(tipoVector == 1){ //ascendente
-        *x=t/n;
-        *y=t/n;
-        *z=t/n;
+        *x=t/(pow(n,0.9) * log(pow(n,0.9)));
+        *y=t/(pow(n,1.03) * log(pow(n,1.03)));
+        *z=t/(pow(n,1.16) * log(pow(n,1.16)));
     }else if(tipoVector == 2){ //descendente
-        *x=t/n;
-        *y=t/n;
-        *z=t/n;
+        *x=t/(pow(n,0.9) * log(pow(n,0.9)));
+        *y=t/(pow(n,1.03) * log(pow(n,1.03)));
+        *z=t/(pow(n,1.16) * log(pow(n,1.16)));
     }else{ //aleatorio
-        *x=t/n;
-        *y=t/n;
-        *z=t/n;
+        *x=t/(pow(n,0.98) * log(pow(n,0.98)));
+        *y=t/(pow(n,1.13) * log(pow(n,1.13)));
+        *z=t/(pow(n,1.28) * log(pow(n,1.28)));
     }
 }
 
@@ -405,27 +405,27 @@ void imprimirCabeceras(int tipoVector) {
     switch(tipoVector) {
         case 1:
             tipoVectorStr = "ascendente";
-            cotaSub = "n^0.72 * log(n)";
-            cotaAjustada = "n^0.87 * log(n)";
-            cotaSobre = "n^1.02 * log(n)";
+            cotaSub = "n^0.9 * log(n^0.9)";
+            cotaAjustada = "n^1.03 * log(n^1.03)";
+            cotaSobre = "n^1.16 * log(n^1.16)";
             break;
         case 2:
             tipoVectorStr = "descendente";
-            cotaSub = "n^0.84 * log(n)";
-            cotaAjustada = "n^0.89 * log(n)";
-            cotaSobre = "n^0.94 * log(n)";
+            cotaSub = "n^0.9 * log(n^0.9)";
+            cotaAjustada = "n^1.03 * log(n^1.03)";
+            cotaSobre = "n^1.16 * log(n^1.16)";
             break;
         case 3:
             tipoVectorStr = "aleatorio";
-            cotaSub = "n^0.81 * log(n)";
-            cotaAjustada = "n^0.91 * log(n)";
-            cotaSobre = "n^1.01 * log(n)";
+            cotaSub = "n^0.98 * log(n^0.98)";
+            cotaAjustada = "n^1.13 * log(n^1.13)";
+            cotaSobre = "n^1.26 * log(n^1.26)";
             break;
         default:
             tipoVectorStr = "desconocido";
-            cotaSub = "n^0.8 * log(n)";
-            cotaAjustada = "n^0.9 * log(n)";
-            cotaSobre = "n^1.0 * log(n)";
+            cotaSub = "n^1.2 * log(n^1.2)";
+            cotaAjustada = "n^1.2 * log(n^1.2)";
+            cotaSobre = "n^1.2 * log(n^1.2)";
     }
 
     printf("\nMedición de tiempos para vector %s:\n", tipoVectorStr);
@@ -433,7 +433,7 @@ void imprimirCabeceras(int tipoVector) {
     printf("Cota ajustada: %s\n", cotaAjustada);
     printf("Cota sobrestimada: %s\n", cotaSobre);
     printf("\n");
-    printf("%8s\t%24s\t%24s\t%24s\t%24s\n\n", "n", "t(n)", cotaSub, 
+    printf("%8s\t%24s\tt(n)/%19s\tt(n)/%19s\tt(n)/%19s\n\n", "n", "t(n)", cotaSub, 
                                     cotaAjustada, cotaSobre);
 }
 
@@ -482,7 +482,7 @@ void medirTiempo(int tipoVector){
     double ta, tb, t, x, y, z; int n, i, ok; int *v;
 
     imprimirCabeceras(tipoVector);
-    for(n= 500; n <= 32000; n = n * 2){
+    for(n= 500; n <= 64000; n = n * 2){
         v = malloc(n * sizeof(int));
         elegirTipoDeVector(v,n,tipoVector);
         ta = microsegundos();
