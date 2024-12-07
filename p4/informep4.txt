@@ -32,7 +32,30 @@ GRUPO:2.3	FECHA:7/12/24
   + Kernel: Ubuntu 6.2.0-37-generic
   + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
 
-.-Algoritmo de Ordenación por MOntículos:
+.-CREAR E INSERTAR MONTÍCULO:
+
+void crearMonticulo(pmonticulo m, int v[], int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        m->vector[i] = v[i];
+    }
+    m->ultimo = n - 1;
+    for (i = (n / 2) - 1; i >= 0; i--) {
+        hundir(m, i);
+    }
+}
+
+void insertarMonticulo(pmonticulo m, int x) {
+    if (m->ultimo == TAM - 1) {
+        printf("Error: Montículo lleno\n");
+        return;
+    }
+    m->ultimo++;
+    m->vector[m->ultimo] = x;
+    flotar(m, m->ultimo);
+}
+
+.-ALGORITMO DE ORDENACIÓN POR MONTÍCULOS:
 
 void ordenarPorMonticulos(int v[], int n) {
     int i;
@@ -48,7 +71,7 @@ void ordenarPorMonticulos(int v[], int n) {
     free(m);
 }
 
-.-Medir Tiempos:
+.-MEDIR TIEMPOS:
 
 	Para tiempos menores de 500ms calcularemos los tiempos de esta forma:
   (tb-ta)/k (donde k son las repeteciones, en este caso 1000; tb, que corresponde
