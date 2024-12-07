@@ -3,3 +3,203 @@ TITULO: Práctica 4 -> MONTICULOS
 AUTOR1: Ángela Fouz Suárez          LOGIN1: angela.fouz
 AUTOR2: Angela Marlene Clemente López       LOGIN2: angela.clemente
 GRUPO:2.3	FECHA:7/12/24
+
+.-INTRODUCCION
+
+    En esta práctica, exploraremos el uso y las propiedades de los montículos de 
+  mínimos, una estructura de datos fundamental para resolver eficientemente 
+  problemas que involucran operaciones frecuentes de obtención y eliminación del 
+  menor elemento. La práctica está estructurada en cuatro partes principales, 
+  que abarcan desde la implementación de operaciones básicas sobre montículos 
+  hasta la validación empírica de sus complejidades algorítmicas.
+
+    Primero, implementaremos las operaciones básicas de un montículo de mínimos, 
+  utilizando una representación basada en arrays para almacenar y manipular los 
+  elementos. A continuación, validaremos que dichas operaciones cumplen con las 
+  expectativas de tiempo de ejecución teóricas. Posteriormente, aplicaremos estas 
+  operaciones para implementar el algoritmo de ordenación por montículos, 
+  demostrando su efectividad y comparándolo con otros algoritmos de ordenación 
+  estudiados en prácticas previas.
+
+    Finalmente, realizaremos un análisis empírico del comportamiento de estas 
+  operaciones y algoritmos, evaluando su rendimiento en diferentes casos 
+  iniciales: vectores ordenados, inversamente ordenados y desordenados. Este 
+  análisis nos permitirá confirmar las complejidades teóricas asociadas a cada 
+  operación y resaltar las ventajas del uso de montículos en problemas reales.
+
+.-UNIDADES:
+
+  Las unidades empleadas en todas las pruebas son en microsegundos(micros).
+
+.- MAQUINA:
+
+  + OS: Ubuntu 22.04.3 LTS
+  + Procesador: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 6 núcleos y 2 hilos.
+  + RAM: 16 GB 
+  + Kernel: Ubuntu 6.2.0-37-generic
+  + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+
+.-Algoritmo de Ordenación por MOntículos:
+
+void ordenarPorMonticulos(int v[], int n) {
+    int i;
+    pmonticulo m = (pmonticulo)malloc(sizeof(struct monticulo));
+    
+    crearMonticulo(m, v, n);
+    
+    for (i = 0; i < n; i++) {
+        v[i] = consultarMenor(m);
+        quitarMenor(m);
+    }
+    
+    free(m);
+}
+
+.-Medir Tiempos:
+
+	Para tiempos menores de 500ms calcularemos los tiempos de esta forma:
+  (tb-ta)/k (donde k son las repeteciones, en este caso 1000; tb, que corresponde
+  a la hora del sistema después de ejecutar el algoritmo; y ta, que corresponde a
+  la hora del sistema antes de ejecutar el algoritmo). Estos casos se marcarán en
+  la tabla con un "*".                                                     
+
+.-MEDICIONES DE TIEMPOS
+Medición de tiempos para crearMonticulo:
+       n                            t(n)                          t(n)/n
+500.000000                    18.8740000*                      0.0377480
+1000.000000                   40.0520000*                      0.0400520
+2000.000000                   93.2300000*                      0.0466150
+4000.000000                  233.1170000*                      0.0582792
+8000.000000                  582.0000000                       0.0727500
+16000.000000                1081.0000000                       0.0675625
+32000.000000                2187.0000000                       0.0683437
+Medición de tiempos para insertarMonticulo:
+       n                            t(n)                   t(n)/n*log(n)
+500.000000                    35.2930000*                      0.0113581
+1000.000000                   91.2380000*                      0.0132081
+2000.000000                  204.4320000*                      0.0134479
+4000.000000                  471.5560000*                      0.0142137
+8000.000000                  934.0000000                       0.0129907
+16000.000000                1843.0000000                       0.0118991
+32000.000000                3735.0000000                       0.0112516
+
+Medición de tiempos para vector ascendente:
+Cota subestimada: n^0.9 * log(n^0.9)
+Cota ajustada: n^1.03 * log(n^1.03)
+Cota sobrestimada: n^1.16 * log(n^1.16)
+Constante: 0.033
+
+       n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
+
+     500	             130.3870000*	               0.0867971	               0.0338099	               0.0133831
+    1000	             299.1160000*	               0.0959976	               0.0341716	               0.0123607
+    2000	             667.0000000	               0.1042536	               0.0339127	               0.0112101
+    4000	            1418.0000000	               0.1088462	               0.0323557	               0.0097738
+    8000	            2992.0000000	               0.1135831	               0.0308544	               0.0085172
+   16000	            6727.0000000	               0.1270516	               0.0315391	               0.0079560
+   32000	           15259.0000000	               0.1441198	               0.0326934	               0.0075365
+   64000	           33800.0000000	               0.1603602	               0.0332429	               0.0070028
+
+
+Medición de tiempos para vector descendente:
+Cota subestimada: n^0.9 * log(n^0.9)
+Cota ajustada: n^1.03 * log(n^1.03)
+Cota sobrestimada: n^1.16 * log(n^1.16)
+Constante: 0.037
+       n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
+
+     500	             146.0230000*	               0.0972058	               0.0378644	               0.0149880
+    1000	             347.9470000*	               0.1116693	               0.0397502	               0.0143787
+    2000	             748.0000000	               0.1169141	               0.0380311	               0.0125714
+    4000	            1587.0000000	               0.1218187	               0.0362119	               0.0109386
+    8000	            3568.0000000	               0.1354494	               0.0367943	               0.0101568
+   16000	            8085.0000000	               0.1526999	               0.0379060	               0.0095621
+   32000	           16680.0000000	               0.1575410	               0.0357379	               0.0082383
+   64000	           38129.0000000	               0.1808986	               0.0375005	               0.0078997
+
+Medición de tiempos para vector aleatorio:
+Cota subestimada: n^0.9 * log(n^0.9)
+Cota ajustada: n^1.03 * log(n^1.03)
+Cota sobrestimada: n^1.16 * log(n^1.16)
+Constante: 0.038
+Anomalías #
+       n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
+
+     500	             115.9560000*	               0.0771905	               0.0300679#	               0.0119019
+    1000	             282.9730000*	               0.0908167	               0.0323274#	               0.0116936
+    2000	             805.0000000	               0.1258233	               0.0409291	               0.0135294
+    4000	            1743.0000000	               0.1337933	               0.0397715	               0.0120139
+    8000	            3776.0000000	               0.1433456	               0.0389393	               0.0107489
+   16000	            8186.0000000	               0.1546075	               0.0383796	               0.0096815
+   32000	           17763.0000000	               0.1677698	               0.0380583	               0.0087732
+   64000	           38895.0000000	               0.1845328	               0.0382539	               0.0080584
+
+
+.-CONCLUSIONES:
+
+    Tras analizar los resultados obtenidos en las mediciones de tiempo para las 
+  diferentes operaciones con montículos y compararlos con los algoritmos de 
+  ordenación implementados en prácticas anteriores, podemos concluir lo siguiente:
+
+ -Complejidad de inserción vs. creación de montículos:
+
+    Empíricamente, hemos demostrado que:
+    - Añadir n nodos a un montículo inicialmente vacío (usando insertarMontículo) 
+    se ejecuta en un tiempo O(n log n). Esto se evidencia en la tabla de 
+    "insertarMonticulo", donde la columna t(n)/n*log(n) muestra valores 
+    relativamente constantes, indicando que el tiempo de ejecución crece 
+    proporcionalmente a n log n.
+
+    - Crear un montículo (operación crearMonticulo) a partir de un vector con n 
+    elementos muestra un comportamiento que no se ajusta perfectamente a la 
+    complejidad teórica esperada de O(n). En la tabla de "crearMonticulo", 
+    observamos que los valores en la columna t(n)/n no son constantes, sino que 
+    muestran una tendencia creciente, especialmente para valores pequeños de n.
+
+    A pesar de estas observaciones, la creación del montículo sigue siendo 
+  significativamente más eficiente que la inserción individual de n elementos, 
+  especialmente para valores grandes de n. Esto se debe a que crearMonticulo 
+  utiliza un algoritmo más eficiente que construye el montículo de abajo hacia 
+  arriba, mientras que insertarMontículo debe mantener la propiedad de montículo 
+  en cada inserción.
+
+ -Comparación con algoritmos anteriores:
+
+    En la práctica 2 tenemos estos resultados:
+    Ordenación por inserción:
+        - Vector ascendente: O(n)
+        - Vector descendente: O(n^2)
+        - Vector aleatorio: O(n^2)
+    Ordenación rápida (Quicksort):
+        - Vector ascendente: O(n^0.87 log n)
+        - Vector descendente: O(n^0.89 log n)
+        - Vector aleatorio: O(n^0.91 log n)
+    Comparación:
+        La ordenación por montículos muestra un rendimiento más consistente en todos 
+      los casos, sin importar el orden inicial del vector. Esto es una ventaja 
+      significativa sobre la ordenación por inserción y, en cierta medida, sobre la 
+      ordenación rápida.
+        Para vectores ya ordenados en orden ascendente, la ordenación por inserción 
+      es más eficiente (O(n)), mientras que la ordenación por montículos mantiene 
+      su complejidad O(n log n).
+        Para vectores ordenados en orden descendente, la ordenación por montículos es 
+      significativamente más eficiente que la ordenación por inserción 
+      (O(n log n) vs O(n^2)).
+        En comparación con la ordenación rápida, la ordenación por montículos muestra 
+      un comportamiento más predecible y estable, aunque ligeramente menos 
+      eficiente en el caso promedio (vector aleatorio).
+
+ -Resumen final:
+    La ordenación por montículos demuestra ser un algoritmo robusto y eficiente, 
+  ofreciendo un rendimiento consistente O(n log n) en todos los escenarios. 
+  Aunque puede ser superado por otros algoritmos en casos específicos (como la 
+  ordenación por inserción en vectores casi ordenados o Quicksort en datos 
+  aleatorios), su predictibilidad y estabilidad lo hacen especialmente valioso 
+  cuando se requiere un comportamiento consistente o cuando el peor caso es crítico.
+    La elección entre estos algoritmos dependerá del tamaño del conjunto de datos, 
+  su distribución inicial, y los requisitos específicos de la aplicación en 
+  cuanto a rendimiento y predictibilidad:
+    - Para datos pequeños o casi ordenados: Ordenación por Inserción
+    - Para datos grandes y aleatorios: Ordenación Rápida
+    - Para garantizar un rendimiento consistente o cuando el peor caso es crítico: 
+        Ordenación por Montículos
