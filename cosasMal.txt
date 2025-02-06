@@ -1,3 +1,5 @@
+P1:
+- No se indican que los * significan que los tiempos son menores de 500 y porque se debe hacer eso.
 P2:
 - El espacio de las tablas: poner bien las variables para que se vea bonito.
 - Hacer los test tmb en una única función.
