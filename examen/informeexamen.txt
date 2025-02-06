@@ -1,0 +1,85 @@
+TITULO:
+AUTOR: Ángela Fouz Suárez          LOGIN: angela.fouz
+
+.-INTRODUCCION:
+  En este problema trataremos de determinar cuál es el k-ésimo mayor número
+  de un vector de enteros, para un valor dado de k.
+
+.-UNIDADES:
+
+  Las unidades empleadas en todas las pruebas son en microsegundos(micros).
+
+.- MAQUINA:
+
+  + OS: Ubuntu 22.04.3 LTS
+  + Procesador: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 6 núcleos y 2 hilos.
+  + RAM: 16 GB 
+  + Kernel: Ubuntu 6.2.0-37-generic
+  + Compilador: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+
+.-ALGORITMOS 
+
+int kesimoMayor(int V[], int n, int k) {
+    int resultado, i;
+    pmonticulo M = (pmonticulo)malloc(sizeof(struct monticulo));
+    if (k > n) {
+        printf("Error: k no puede ser mayor que n\n");
+        return -1;
+    }
+    if (M == NULL) {
+        printf("Error: No se ha podido asignar memoria para el montículo\n");
+        return -1;
+    }
+    crearMonticulo(M, V, k);
+    for (i = k; i < n; i++) {
+        if (V[i] > consultarMenor(M)) {
+            quitarMenor(M);
+            insertarMonticulo(M, V[i]);
+        }
+    }
+    resultado = consultarMenor(M);
+    free(M);
+    return resultado;
+}
+
+.-MEDIR TIEMPOS:
+
+	Para tiempos menores de 500ms calcularemos los tiempos de esta forma:
+  (tb-ta)/k (donde k son las repeteciones, en este caso 1000; tb, que corresponde
+  a la hora del sistema después de ejecutar el algoritmo; y ta, que corresponde a
+  la hora del sistema antes de ejecutar el algoritmo). Estos casos se marcarán en
+  la tabla con un "*". 
+
+////////Medición de tiempos para k = 9////////
+Cota subestimada: n^0.7
+Cota ajustada: n^0.85
+Cota sobrestimada: n^0.9
+
+       n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
+
+     500	               5.5560000*	               0.0716941	               0.0282252	               0.0206866
+    1000	               5.8430000*	               0.0464126	               0.0164678	               0.0116583
+    2000	               8.6480000*	               0.0422858	               0.0135220	               0.0092467
+    4000	              14.5540000*	               0.0438067	               0.0126250	               0.0083393
+    8000	              25.1890000*	               0.0466711	               0.0121223	               0.0077345
+   16000	              47.0390000*	               0.0536505	               0.0125590	               0.0077402
+   32000	              90.8500000*	               0.0637852	               0.0134570	               0.0080111
+   64000	             166.7870000*	               0.0720836	               0.0137060	               0.0078813
+////////Medición de tiempos para k = n/2////////
+Cota subestimada: n^0.9 * log(n^0.9)
+Cota ajustada: n^1.03 * log(n^1.03)
+Cota sobrestimada: n^1.16 * log(n^1.16)
+
+       n	                    t(n)	t(n)/ n^0.9 * log(n^0.9)	t(n)/n^1.03 * log(n^1.03)	t(n)/n^1.16 * log(n^1.16)
+
+     500	              11.7420000*	               0.0078165	               0.0030448	               0.0012052
+    1000	              37.7730000*	               0.0121228	               0.0043153	               0.0015609
+    2000	              90.8780000*	               0.0142044	               0.0046206	               0.0015274
+    4000	             203.9200000*	               0.0156530	               0.0046530	               0.0014055
+    8000	             448.5720000*	               0.0170288	               0.0046258	               0.0012769
+   16000	             969.0000000	               0.0183013	               0.0045431	               0.0011460
+   32000	            2066.0000000	               0.0195132	               0.0044265	               0.0010204
+   64000	            4423.0000000	               0.0209844	               0.0043501	               0.0009164
+
+  .-CONCLUSIONES:
+  No se ha podido acabar en tiempo.

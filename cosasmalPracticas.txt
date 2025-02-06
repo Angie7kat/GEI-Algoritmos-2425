@@ -1,0 +1,19 @@
+P2:
+- El espacio de las tablas: poner bien las variables para que se vea bonito.
+- Hacer los test tmb en una única función.
+- Definir el vector tmb añade tiempo, si no lo tenemos en cuenta se resta, o si se tiene en cuenta lo definimos antes de medir el tiempo.
+- Mejor y peor caso de cada una.
+P3:
+- Resolución doble pusimos % tamb_tabla 2 veces.
+- INsertar no hay filtro para duplicados y no se usa buscar.
+- Declaración de variables int en 2 for.
+- El tiempo incluye la generación aleatoria de la clave, se lo hay que restar.
+- Introducción: falta vamos a estudiar lo que cuesta hacer n operaciones buscar en el diccionario(ser más especifico).
+- Cota sin t(n) la cota es el denominador
+P4:
+- En crear e insertar me faltan tablas de subestimada y sobrestimada 
+
+
+gcc -Wall p4.c -lm
+./a.out 
+gcc -Wall -o p4 p4.c -lm 
